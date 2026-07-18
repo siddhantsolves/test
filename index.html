@@ -26,7 +26,34 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
-      background: radial-gradient(circle at center, #11111a 0%, #06060c 100%);
+      background: radial-gradient(circle at center, #110d18 0%, #06060c 100%);
+    }
+
+    /* Floating Fullscreen Trigger Button */
+    #fullscreen-btn {
+      position: fixed;
+      top: 25px;
+      left: 30px;
+      z-index: 100;
+      background: rgba(22, 13, 23, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      color: #e2e8f0;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+    #fullscreen-btn:hover {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: rgba(244, 63, 94, 0.45);
+      box-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
     }
 
     /* Cinematic Foreground Scrolling Wrapper */
@@ -34,58 +61,7 @@
       position: relative;
       width: 100%;
       z-index: 10;
-      pointer-events: auto; /* Must start as auto to capture native scroll actions */
-    }
-
-    /* Fixed Navigation Header Overlay */
-    #portfolio-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 100;
-      background: linear-gradient(to bottom, rgba(6, 6, 12, 0.8) 0%, rgba(6, 6, 12, 0) 100%);
-      backdrop-filter: blur(4px);
-    }
-    .brand-title {
-      font-size: 14px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #3b82f6;
-    }
-    .mode-toggle-container {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      pointer-events: auto;
-    }
-    .toggle-btn {
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      color: #94a3b8;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    .toggle-btn:hover {
-      border-color: #3b82f6;
-      color: #f8fafc;
-    }
-    .toggle-btn.active {
-      background: #2563eb;
-      color: #fff;
-      border-color: #3b82f6;
-      box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+      pointer-events: auto; /* Allow normal document scrolling gestures */
     }
 
     /* Height blocks mapping scroll positions to waypoints */
@@ -103,31 +79,114 @@
       justify-content: flex-start;
     }
 
-    /* Dynamic Glassmorphism cards */
+    /* ----------------------------------------------------
+       Specific Page Position Overrides to Focus on Model
+       ---------------------------------------------------- */
+    
+    /* Scene 1: Top-Right Alignment */
+    #section-0 {
+      justify-content: flex-end !important;
+      align-items: flex-start !important;
+      padding-top: 80px;
+      padding-right: 12%;
+    }
+
+    /* Scene 4: Left Alignment (Clear Cherry Tree Canopy on the Right) */
+    #section-3 {
+      justify-content: flex-start !important;
+      align-items: center !important;
+      padding-left: 8%;
+    }
+
+    /* Scene 5: Right Alignment (Clear Bridge on the Left) */
+    #section-4 {
+      justify-content: flex-end !important;
+      align-items: center !important;
+      padding-right: 8%;
+    }
+
+    /* Scene 7: Bottom-Left Alignment (Clear Bridge and Characters) */
+    #section-6 {
+      justify-content: flex-start !important;
+      align-items: flex-end !important;
+      padding-bottom: 80px;
+      padding-left: 8%;
+    }
+
+    /* Scene 9: Bottom-Left Alignment (Clear Characters on the Bridge) */
+    #section-8 {
+      justify-content: flex-start !important;
+      align-items: flex-end !important;
+      padding-bottom: 80px;
+      padding-left: 8%;
+    }
+
+    /* Scene 10: Bottom-Right Alignment (Anchored cleanly below tree canopy, moved more to the right) */
+    #section-9 {
+      justify-content: flex-end !important;
+      align-items: flex-end !important;
+      padding-bottom: 80px;
+      padding-right: 5%;
+    }
+
+    /* Scene 12: Top-Right Alignment (Shifted clear of the island and bridge) */
+    #section-11 {
+      justify-content: flex-end !important;
+      align-items: flex-start !important;
+      padding-top: 80px;
+      padding-right: 12%;
+    }
+
+    /* Dynamic Glassmorphism cards with Cherry Blossom styles */
     .skill-card {
       pointer-events: auto;
-      background: rgba(15, 23, 42, 0.45);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(18, 12, 28, 0.45);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(244, 63, 94, 0.18);
       padding: 32px;
-      border-radius: 16px;
+      border-radius: 20px;
+      width: 100%;
       max-width: 440px;
       opacity: 0;
       transform: translateY(40px);
-      transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 
+                  inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: visible !important; /* Allow petals to drift outside card boundaries */
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: border-color 0.4s ease, box-shadow 0.4s ease;
     }
+    .skill-card:hover {
+      border-color: rgba(244, 63, 94, 0.5);
+      box-shadow: 0 25px 60px rgba(244, 63, 94, 0.15), 
+                  0 20px 50px rgba(0, 0, 0, 0.7), 
+                  inset 0 1px 2px rgba(255, 255, 255, 0.15);
+    }
+
+    /* Cherry Blossom Branch Background Pattern */
+    .skill-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="%23f43f5e" stroke-width="1.2" stroke-linecap="round"><path d="M100,0 C85,20 65,15 50,28 C42,32 45,42 35,46 C30,38 25,40 20,44 M70,14 C65,22 55,20 52,28 M50,28 C48,20 40,22 38,18" opacity="0.25"/></svg>') no-repeat top right;
+      pointer-events: none;
+      z-index: 1;
+    }
+
     .scroll-section.active .skill-card {
       opacity: 1;
       transform: translateY(0);
-      border-color: rgba(59, 130, 246, 0.35);
     }
     .skill-card h3 {
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: #3b82f6;
+      color: #f43f5e;
       margin-bottom: 8px;
     }
     .skill-card h2 {
@@ -138,8 +197,117 @@
     }
     .skill-card p {
       font-size: 13px;
-      color: #94a3b8;
+      color: #cbd5e1;
       line-height: 1.6;
+    }
+
+    /* Rating Rows Design with Vector Logo integrations */
+    .skill-list {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .skill-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(244, 63, 94, 0.08);
+      padding-bottom: 6px;
+      cursor: pointer;
+    }
+    .skill-row-left {
+      display: flex;
+      align-items: center;
+    }
+    .tech-icon {
+      width: 22px;
+      height: 22px;
+      margin-right: 12px;
+      vertical-align: middle;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .skill-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      letter-spacing: 0.5px;
+      transition: color 0.3s ease;
+    }
+    .stars-container {
+      position: relative;
+      display: inline-block;
+      font-size: 14px;
+      color: rgba(244, 63, 94, 0.15); /* Empty backstars */
+      letter-spacing: 2px;
+      user-select: none;
+    }
+    .stars-inner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      color: #fda4af; /* Filled stars */
+      text-shadow: 0 0 6px rgba(244, 63, 94, 0.8), 0 0 12px rgba(244, 63, 94, 0.4);
+      width: 0%; /* Initially zero for GSAP */
+      pointer-events: none;
+    }
+
+    /* Falling Petals Element Container */
+    .petal-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 10;
+    }
+
+    /* Cherry Petal Styling */
+    .cherry-petal {
+      position: absolute;
+      background: linear-gradient(135deg, #fda4af 0%, #f43f5e 100%);
+      opacity: 0.85;
+      border-radius: 12px 0 12px 12px;
+      pointer-events: none;
+      will-change: transform, opacity;
+      box-shadow: 0 2px 6px rgba(244, 63, 94, 0.3);
+      transform-origin: center;
+    }
+
+    /* Resting Petal State */
+    .cherry-petal.resting-petal {
+      transform: rotate(var(--rest-rot, 0deg)) scale(var(--rest-scale, 1));
+      opacity: 0.9;
+    }
+
+    /* Gentle Spring-like bud growth keyframe */
+    @keyframes fade-in-petal {
+      0% {
+        opacity: 0;
+        transform: translateY(-8px) rotate(var(--rest-rot, 0deg)) scale(0);
+      }
+      100% {
+        opacity: 0.9;
+        transform: translateY(0) rotate(var(--rest-rot, 0deg)) scale(var(--rest-scale, 1));
+      }
+    }
+
+    .cherry-petal.resting-petal.fade-in {
+      animation: fade-in-petal 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    /* 3D Tumble and Shedding Keyframe */
+    @keyframes fall-and-tumble {
+      0% {
+        transform: translateY(0) rotate(var(--rest-rot, 0deg)) scale(var(--rest-scale, 1));
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(var(--fall-distance, 450px)) translateX(var(--sway-distance, 80px)) rotateX(var(--rot-x, 720deg)) rotateY(var(--rot-y, 360deg)) rotateZ(var(--rot-z, 180deg)) scale(0.2);
+        opacity: 0;
+      }
     }
 
     /* Vertical Navigation Dots stream */
@@ -164,12 +332,12 @@
       transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     }
     .dot-node:hover {
-      background: #3b82f6;
+      background: #f43f5e;
     }
     .dot-node.active {
-      background: #2563eb;
+      background: #e11d48;
       transform: scale(1.3);
-      box-shadow: 0 0 10px rgba(37, 99, 235, 0.6);
+      box-shadow: 0 0 10px rgba(225, 29, 72, 0.6);
     }
 
     /* Scroll Down visual indicator */
@@ -206,7 +374,7 @@
       transform: translateX(-50%);
       width: 4px;
       height: 8px;
-      background-color: #3b82f6;
+      background-color: #f43f5e;
       border-radius: 2px;
       animation: scroll-ping 1.5s infinite;
     }
@@ -234,8 +402,8 @@
     .spinner {
       width: 40px;
       height: 40px;
-      border: 3px solid rgba(59, 130, 246, 0.1);
-      border-top-color: #3b82f6;
+      border: 3px solid rgba(244, 63, 94, 0.1);
+      border-top-color: #f43f5e;
       border-radius: 50%;
       animation: spin 1s infinite linear;
     }
@@ -248,7 +416,7 @@
       bottom: 20px;
       left: 20px;
       background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(59, 130, 246, 0.3);
+      border: 1px solid rgba(244, 63, 94, 0.3);
       padding: 10px 18px;
       border-radius: 8px;
       z-index: 1000;
@@ -261,8 +429,9 @@
     /* Responsive media rules */
     @media (max-width: 768px) {
       .scroll-section {
-        padding: 0 20px;
         justify-content: center !important;
+        align-items: center !important;
+        padding: 0 20px !important;
       }
       .skill-card {
         padding: 24px;
@@ -271,12 +440,17 @@
       #scroll-dots {
         right: 15px;
       }
-      #portfolio-header {
-        padding: 15px 20px;
+      #fullscreen-btn {
+        top: 15px;
+        left: 15px;
+        padding: 8px 12px;
+        font-size: 9px;
       }
     }
   </style>
 
+  <!-- Load GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
   <script type="importmap">
     {
@@ -292,20 +466,17 @@
   <!-- Loading State Panel -->
   <div id="loading-overlay">
     <div class="spinner"></div>
-    <span id="loading-text" style="font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">Initializing Spatial Arena...</span>
+    <span id="loading-text" style="font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; text-align: center; max-width: 80%; line-height: 1.6;">
+      Initializing Spatial Arena...<br>
+      <span style="font-size: 9px; color: #f43f5e; opacity: 0.85; margin-top: 8px; display: block; letter-spacing: 1px;">For the best experience, please view in Fullscreen mode.</span>
+    </span>
   </div>
 
   <!-- Main Viewport Canvas -->
   <div id="canvas-container"></div>
 
-  <!-- Persistent Workspace Header -->
-  <div id="portfolio-header">
-    <div class="brand-title">Creative Spatial Lab</div>
-    <div class="mode-toggle-container">
-      <button id="mode-scroll" class="toggle-btn active">Scroll Story</button>
-      <button id="mode-free" class="toggle-btn">Free Orbit</button>
-    </div>
-  </div>
+  <!-- Fullscreen Toggle Button -->
+  <button id="fullscreen-btn">View Fullscreen</button>
 
   <!-- Global Vertical Progress Dots -->
   <div id="scroll-dots"></div>
@@ -318,88 +489,245 @@
 
   <!-- Immersive Cinematic Scrolling Sections -->
   <div id="scroll-wrapper">
+    <!-- View 01 (Index 0) - Poetic Introduction -->
     <div class="scroll-section" id="section-0">
       <div class="skill-card">
-        <h3>Waypoint 01</h3>
-        <h2>Creative Vision</h2>
-        <p>Combining design principles and spatial technology to construct interactive experiences that engage users in full 3D space.</p>
+        <h3>Waypoint 01 — The Prelude</h3>
+        <h2>The Architect's Loom</h2>
+        <p style="font-style: italic; white-space: pre-line; line-height: 1.8;">Where logic weaves through lines of code,
+          And pixels bloom along my road.
+          Step inside my spatial space,
+          Where art and science interlace.</p>
       </div>
     </div>
+    
+    <!-- View 02 (Index 1) - Frontend Fundamentals -->
     <div class="scroll-section" id="section-1">
       <div class="skill-card">
-        <h3>Waypoint 02</h3>
-        <h2>WebGL & Three.js</h2>
-        <p>Developing low-overhead, GPU-accelerated graphic models inside desktop and mobile browsers with native browser engines.</p>
+        <h3>Waypoint 02 — Web Core</h3>
+        <h2>Frontend Fundamentals</h2>
+        <div class="skill-list">
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- HTML5 Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon"><path d="M1.5 0h21l-1.91 21.563L12 24l-8.59-2.437z" fill="#e34f26"/><path d="M12 2.182v19.57l6.816-1.933L20.25 3.86z" fill="#f06529"/><path d="M12 11.233H8.38l-.25-2.8h3.87V5.63H5.03l.76 8.52h6.21zm0 5.562l-3.07-.828-.2-2.204H5.16l.39 4.39 6.45 1.833z" fill="#ebebeb"/><path d="M12 11.233h3.62l-.34 3.82-3.28.88v2.79l6.45-1.83.6-6.86H12zm0-5.603h6.86l-.16 1.8h-6.7z" fill="#fff"/></svg>
+              <span class="skill-name">HTML5</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="100%">★★★★★</div>
+            </div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- CSS3 Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon"><path d="M1.5 0h21l-1.91 21.563L12 24l-8.59-2.437z" fill="#1572b6"/><path d="M12 2.182v19.57l6.816-1.933L20.25 3.86z" fill="#33a9dc"/><path d="M12 11.233H8.38l-.25-2.8h3.87V5.63H5.03l.76 8.52h6.21zm0 5.562l-3.07-.828-.2-2.204H5.16l.39 4.39 6.45 1.833z" fill="#ebebeb"/><path d="M12 11.233h3.42l-.34 3.82-3.08.88v2.79l6.05-1.83.6-6.86H12zm0-5.603h6.46l-.16 1.8h-6.3z" fill="#fff"/></svg>
+              <span class="skill-name">CSS</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="90%">★★★★★</div>
+            </div>
+          </div>
+        </div>
+        <p>Structuring clean web semantics and crafting detailed style rules to establish highly structured, responsive user interfaces.</p>
       </div>
     </div>
-    <div class="scroll-section" id="section-2">
-      <div class="skill-card">
-        <h3>Waypoint 03</h3>
-        <h2>Spatial Layouts</h2>
-        <p>Distributing dynamic complex models in physical spaces, using responsive viewport transformations to scale seamlessly.</p>
-      </div>
-    </div>
+    
+    <!-- View 03 (Index 2) - Card Removed -->
+    <div class="scroll-section" id="section-2"></div>
+    
+    <!-- View 04 (Index 3) - Frontend Development -->
     <div class="scroll-section" id="section-3">
       <div class="skill-card">
-        <h3>Waypoint 04</h3>
-        <h2>Advanced Materials</h2>
-        <p>Utilizing high-end shader modifications, realistic textures, and physical standard materials to define visual properties.</p>
+        <h3>Waypoint 04 — Client Interaction</h3>
+        <h2>Frontend Development</h2>
+        <div class="skill-list">
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- JS Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon"><rect width="24" height="24" rx="3" fill="#f7df1e"/><text x="22" y="21" fill="#323330" font-family="Arial, sans-serif" font-weight="900" font-size="11" text-anchor="end">JS</text></svg>
+              <span class="skill-name">JavaScript</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="80%">★★★★★</div>
+            </div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- TS Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon"><rect width="24" height="24" rx="3" fill="#3178c6"/><text x="22" y="21" fill="#fff" font-family="Arial, sans-serif" font-weight="900" font-size="11" text-anchor="end">TS</text></svg>
+              <span class="skill-name">TypeScript</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="70%">★★★★★</div>
+            </div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- GSAP Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon" fill="#88ce02"><path d="M8 3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v10a4 4 0 0 1-4 4h-2a2 2 0 0 0-2 2v2h4a2 2 0 0 1 2 2v1H6v-3a4 4 0 0 1 4-4h2a2 2 0 0 0 2-2V3H8z" opacity="0.9"/></svg>
+              <span class="skill-name">GSAP</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="70%">★★★★★</div>
+            </div>
+          </div>
+        </div>
+        <p>Implementing client architectures with clean scripts, static type checks, and fluid, scroll-synced timeline animations.</p>
       </div>
     </div>
+    
+    <!-- View 05 (Index 4) - 3D Designing -->
     <div class="scroll-section" id="section-4">
       <div class="skill-card">
-        <h3>Waypoint 05</h3>
-        <h2>Interactivity & Raycasting</h2>
-        <p>Designing custom point calculation algorithms, collision boundaries, and hover actions across dense model spaces.</p>
+        <h3>Waypoint 05 — Spatial Dimension</h3>
+        <h2>3D Designing</h2>
+        <div class="skill-list">
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- Three.js Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon" fill="none" stroke="#ffffff" stroke-width="1.5"><polygon points="12,2 2,18 22,18" stroke="#ffffff" /><line x1="12" y1="2" x2="12" y2="18" /><line x1="2" y1="18" x2="12" y2="10" /><line x1="22" y1="18" x2="12" y2="10" /></svg>
+              <span class="skill-name">Three.js</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="80%">★★★★★</div>
+            </div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- WebGL Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon" fill="none" stroke="#ff3333" stroke-width="1.5"><circle cx="12" cy="12" r="10" stroke="#990000" /><path d="M6 15l4-6 4 6 4-6" stroke="#ff3333" stroke-width="2" /></svg>
+              <span class="skill-name">WebGL</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="80%">★★★★★</div>
+            </div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- Spline Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon" fill="none" stroke="#f43f5e" stroke-width="2"><path d="M4 12c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8-8-3.582-8-8z" stroke="#333" stroke-width="1"/><path d="M8 8c2-2 6-2 8 0s-2 6-4 8-6 2-4-4" stroke="#f43f5e" /></svg>
+              <span class="skill-name">Spline</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="70%">★★★★★</div>
+            </div>
+          </div>
+        </div>
+        <p>Constructing interactive mesh scenes and programming custom GPU-backed shaders to render immersive spatial systems in real-time.</p>
       </div>
     </div>
-    <div class="scroll-section" id="section-5">
-      <div class="skill-card">
-        <h3>Waypoint 06</h3>
-        <h2>Lighting Engineering</h2>
-        <p>Balancing ambient light and direction elements to create depth, casting soft real-time depth shadows across assets.</p>
-      </div>
-    </div>
+    
+    <!-- View 06 (Index 5) - Card Removed -->
+    <div class="scroll-section" id="section-5"></div>
+    
+    <!-- View 07 (Index 6) - Programming -->
     <div class="scroll-section" id="section-6">
       <div class="skill-card">
-        <h3>Waypoint 07</h3>
-        <h2>Camera Timelines</h2>
-        <p>Configuring coordinate pathways, managing complex focal nodes, and easing camera motion along spatial curves.</p>
+        <h3>Waypoint 07 — Logic & Systems</h3>
+        <h2>Programming</h2>
+        <div class="skill-list">
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- Python Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon" fill="#306998"><path d="M11.89 2c-3.1 0-2.9 1.34-2.9 1.34l.01 1.39h2.93v.42H7.72S5 4.8 5 8.1c0 3.3 2.37 3.19 2.37 3.19l1.42-.01V9.85c0-1.57 1.28-2.93 2.85-2.93h4.35s1.3-.08 1.3-2.88c0-2.8-2.61-3.04-2.61-3.04l-2.8-.01zm2.34 2.01a.63.63 0 1 1 0 1.25.63.63 0 0 1 0-1.25z" fill="#306998"/><path d="M12.11 22c3.1 0 2.9-1.34 2.9-1.34l-.01-1.39H12.07v-.42h4.21s2.72.35 2.72-2.95c0-3.3-2.37-3.19-2.37-3.19l-1.42.01v1.43c0 1.57-1.28 2.93-2.85 2.93H10s-1.3.08-1.3 2.88c0 2.8 2.61 3.04 2.61 3.04l2.8.01zm-2.34-2.01a.63.63 0 1 1 0-1.25.63.63 0 0 1 0 1.25z" fill="#ffd43b"/></svg>
+              <span class="skill-name">Python</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="80%">★★★★★</div>
+            </div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- C Bracket Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon" fill="none" stroke="#a8b9cc" stroke-width="2"><path d="M16 6a6 6 0 1 0 0 12" /><path d="M12 12h8" stroke="#3178c6" stroke-width="1.5" /></svg>
+              <span class="skill-name">C</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="100%">★★★★★</div>
+            </div>
+          </div>
+        </div>
+        <p>Developing close-to-metal low-level scripts, memory adjustments, data handling operations, and optimized execution pipelines.</p>
       </div>
     </div>
-    <div class="scroll-section" id="section-7">
-      <div class="skill-card">
-        <h3>Waypoint 08</h3>
-        <h2>Dynamic Motion</h2>
-        <p>Implementing procedural animations, coordinate loops, and rotational physics to keep standard elements feeling alive.</p>
-      </div>
-    </div>
+    
+    <!-- View 08 (Index 7) - Card Removed -->
+    <div class="scroll-section" id="section-7"></div>
+    
+    <!-- View 09 (Index 8) - Graphics Designing -->
     <div class="scroll-section" id="section-8">
       <div class="skill-card">
-        <h3>Waypoint 09</h3>
-        <h2>Asset Optimization</h2>
-        <p>Compressing geometry sizes, controlling draw call triggers, and handling model instances safely to preserve browser framerate.</p>
+        <h3>Waypoint 09 — Visual Assets</h3>
+        <h2>Graphics Designing</h2>
+        <div class="skill-list">
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- Canva Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon" fill="#00c4cc"><rect width="24" height="24" rx="6"/><text x="12" y="16" fill="#fff" font-family="Georgia, serif" font-weight="bold" font-size="14" text-anchor="middle">C</text></svg>
+              <span class="skill-name">Canva</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="90%">★★★★★</div>
+            </div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- Adobe Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon" fill="#ff0000"><path d="M12.2 2L2 22h4.5l2.6-6.1h5.8l2.6 6.1H22L11.8 2zm-.4 5.3l1.8 4.3H10l1.8-4.3z" fill="#ff0000"/></svg>
+              <span class="skill-name">Adobe</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="80%">★★★★★</div>
+            </div>
+          </div>
+        </div>
+        <p>Designing digital design sheets, vector-based graphics, layout standards, and visual compositions to reinforce user journeys.</p>
       </div>
     </div>
-    <div class="scroll-section" id="section-10">
+    
+    <!-- View 10 (Index 9) - Database Management -->
+    <div class="scroll-section" id="section-9">
       <div class="skill-card">
-        <h3>Waypoint 10</h3>
-        <h2>Responsive Viewports</h2>
-        <p>Applying aspect-ratio correction systems dynamically, ensuring full-canvas experiences work smoothly across all screen ratios.</p>
+        <h3>Waypoint 10 — Structured Storage</h3>
+        <h2>Database Management</h2>
+        <div class="skill-list">
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <!-- MySQL Logo -->
+              <svg viewBox="0 0 24 24" class="tech-icon" fill="none" stroke="#00c4cc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 18c-1.427 -1.026 -3.59 -3.854 -4 -6c-.486 .766 -2.36 2.067 -4 1c-.25 -.16 -1.03 -1.134 -1 -2c.03 -.866 .54 -1.72 1 -2.5c.333 -.566 .667 -1.15 1 -1.5c.148 -.148 .54 -.54 1 -1c.427 -.427 1.15 -1 2 -1c1.621 0 2.213 .843 3 2c1.285 1.887 2.106 3.11 3.5 4c.667 .425 1.5 1.5 1.5 2c0 .4 -.5 1.5 -1 2s-1.5 1 -2 1s-1.5 -.5 -2 -1z" stroke="#00758f" /><circle cx="9" cy="7" r="0.5" fill="#00758f" stroke="none" /><path d="M3 20c3 -1.5 6 1.5 9 0s6 -1.5 9 0" stroke="#f29111" stroke-width="1.5" /></svg>
+              <span class="skill-name">MySQL</span>
+            </div>
+            <div class="stars-container">
+              ★★★★★
+              <div class="stars-inner" data-width="80%">★★★★★</div>
+            </div>
+          </div>
+        </div>
+        <p>Architecting database relational tables, managing schemas safely, and building search operations with clean index logic.</p>
       </div>
     </div>
+    
+    <!-- View 11 (Index 10) - Card Removed -->
+    <div class="scroll-section" id="section-10"></div>
+    
+    <!-- View 12 (Index 11) - Poetic Conclusion -->
     <div class="scroll-section" id="section-11">
       <div class="skill-card">
-        <h3>Waypoint 11</h3>
-        <h2>Continuous Integration</h2>
-        <p>Synthesizing spatial environments and interactive code, wrapping them cleanly into production-ready web designs.</p>
-      </div>
-    </div>
-    <div class="scroll-section" id="section-12">
-      <div class="skill-card">
-        <h3>Waypoint 12</h3>
-        <h2>The Finished Composition</h2>
-        <p>Bringing all physical, code, and design variables into a polished portfolio, demonstrating spatial web engineering.</p>
+        <h3>Waypoint 12 — The Horizon</h3>
+        <h2>The Infinite Canvas</h2>
+        <p style="font-weight: 600; line-height: 1.8; color: #fda4af;">“I do not merely build interfaces; I sculpt the digital spaces where human imagination meets reality.”</p>
       </div>
     </div>
   </div>
@@ -414,9 +742,13 @@
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
     // Core variables
-    let scene, camera, renderer, controls, clock;
+    let scene, camera, renderer, clock;
     let ambientLight, directionalLight;
     let workspaceModelsGroup;
+
+    // Dynamic Orbit Controls tracker
+    let controls = null;
+    let currentLookAt = new THREE.Vector3();
 
     // Camera waypoint values from skills.json
     const WAYPOINTS = [
@@ -494,6 +826,7 @@
       camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
       const startWp = WAYPOINTS[0];
       camera.position.set(startWp.pos[0], startWp.pos[1], startWp.pos[2]);
+      currentLookAt.set(startWp.target[0], startWp.target[1], startWp.target[2]);
 
       // WebGL Renderer configurations
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -507,18 +840,11 @@
       workspaceModelsGroup = new THREE.Group();
       scene.add(workspaceModelsGroup);
 
-      // Orbit Controller Setup
-      controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.target.set(startWp.target[0], startWp.target[1], startWp.target[2]);
-      controls.enabled = false; // Initially controlled by scroll progress
-
-      // Ambient Lighting Setup: User requested 1.5x scale
+      // Ambient Lighting Setup
       ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
       scene.add(ambientLight);
 
-      // Directional Lighting Setup: User requested 0.1x scale
+      // Directional Lighting Setup
       directionalLight = new THREE.DirectionalLight(0xffffff, 0.1);
       directionalLight.position.set(5, 10, 5);
       directionalLight.castShadow = true;
@@ -549,6 +875,12 @@
       // Bind Mode Click Interfaces
       setupUserInteractionEvents();
 
+      // Setup dynamic shedding cards
+      setupCherryCards();
+
+      // Setup card interactive 3D physics & elements timeline triggers
+      setupGSAPInteractivity();
+
       // Initialize default scroll mode states and active layout properties
       setCinematicScrollMode(true);
     }
@@ -564,9 +896,9 @@
 
       const textOverlay = document.getElementById('loading-text');
 
-      // Loads skills.glb using its native coordinates, matching exactly how GLTFLoader behaves in the original workspace.
+      // Loads skills.glb using its native coordinates
       loader.load(
-        'skills.glb',
+        './skills.glb',
         (gltf) => {
           hideLoadingPanel();
           const loadedModel = gltf.scene;
@@ -588,13 +920,11 @@
         (xhr) => {
           if (xhr.total > 0) {
             const percent = Math.round((xhr.loaded / xhr.total) * 100);
-            textOverlay.innerText = `Assembling model structures... ${percent}%`;
+            textOverlay.innerHTML = `Assembling model structures... ${percent}%<br><span style="font-size: 9px; color: #f43f5e; opacity: 0.85; margin-top: 8px; display: block; letter-spacing: 1px;">For the best experience, please view in Fullscreen mode.</span>`;
           }
         },
         (error) => {
-          // Output failure details directly to the F12 console
           console.error("Critical GLTF Loading Error details:", error);
-          
           hideLoadingPanel();
           loadProceduralFallbackStructure();
         }
@@ -635,8 +965,8 @@
       // Core power crystal
       const coreGeo = new THREE.OctahedronGeometry(0.4, 0);
       const coreMat = new THREE.MeshStandardMaterial({
-        color: 0x2563eb,
-        emissive: 0x3b82f6,
+        color: 0xf43f5e,
+        emissive: 0xe11d48,
         emissiveIntensity: 2.0,
         metalness: 0.1,
         roughness: 0.05
@@ -649,7 +979,7 @@
       // Outer mechanical orbital ring
       const ringGeo = new THREE.TorusGeometry(1.2, 0.06, 12, 48);
       const ringMat = new THREE.MeshStandardMaterial({
-        color: 0x3b82f6,
+        color: 0xf43f5e,
         metalness: 0.9,
         roughness: 0.1
       });
@@ -673,11 +1003,40 @@
 
       // Toggle display of the floating 'Scroll' guide card beyond initial step
       const indicator = document.getElementById('scroll-indicator');
-      if (currentScroll > 50) {
-        indicator.style.opacity = '0';
-      } else {
-        indicator.style.opacity = '1';
+      if (indicator) {
+        if (currentScroll > 50) {
+          indicator.style.opacity = '0';
+        } else {
+          indicator.style.opacity = '1';
+        }
       }
+    }
+
+    // Dynamic GSAP Animations for Interactive Star Rating Displays
+    function animateStars(section) {
+      const stars = section.querySelectorAll('.stars-inner');
+      stars.forEach(star => {
+        const targetWidth = star.getAttribute('data-width');
+        gsap.to(star, {
+          width: targetWidth,
+          duration: 1.4,
+          ease: "power2.out",
+          overwrite: "auto",
+          delay: 0.2
+        });
+      });
+    }
+
+    function resetStars(section) {
+      const stars = section.querySelectorAll('.stars-inner');
+      stars.forEach(star => {
+        gsap.to(star, {
+          width: "0%",
+          duration: 0.4,
+          ease: "power2.in",
+          overwrite: "auto"
+        });
+      });
     }
 
     // Coordinates the camera's spatial coordinates using progress interpolations
@@ -719,8 +1078,7 @@
 
       // Smoothly update camera vectors
       camera.position.copy(targetPos);
-      controls.target.copy(targetFocus);
-      controls.update();
+      currentLookAt.copy(targetFocus);
 
       // Trigger section transitions
       updateDOMElementsStates();
@@ -733,9 +1091,15 @@
 
       sections.forEach((section, idx) => {
         if (idx === currentWaypointIndex) {
-          section.classList.add('active');
+          if (!section.classList.contains('active')) {
+            section.classList.add('active');
+            animateStars(section);
+          }
         } else {
-          section.classList.remove('active');
+          if (section.classList.contains('active')) {
+            section.classList.remove('active');
+            resetStars(section);
+          }
         }
       });
 
@@ -764,7 +1128,6 @@
           const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
           const targetY = (idx / (WAYPOINTS.length - 1)) * scrollHeight;
 
-          // Snap to cinematic mode if navigation indicators are clicked
           if (freeOrbitActive) {
             setCinematicScrollMode(true);
           }
@@ -779,17 +1142,44 @@
       });
     }
 
-    // Sets up mode-specific UI configurations
+    // Safe mode click listeners
     function setupUserInteractionEvents() {
       const scrollModeBtn = document.getElementById('mode-scroll');
       const freeModeBtn = document.getElementById('mode-free');
+      const fsBtn = document.getElementById('fullscreen-btn');
 
-      scrollModeBtn.addEventListener('click', () => {
-        setCinematicScrollMode(true);
-      });
+      if (scrollModeBtn) {
+        scrollModeBtn.addEventListener('click', () => {
+          setCinematicScrollMode(true);
+        });
+      }
 
-      freeModeBtn.addEventListener('click', () => {
-        setCinematicScrollMode(false);
+      if (freeModeBtn) {
+        freeModeBtn.addEventListener('click', () => {
+          setCinematicScrollMode(false);
+        });
+      }
+
+      if (fsBtn) {
+        fsBtn.addEventListener('click', () => {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch((err) => {
+              console.error(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+          } else {
+            document.exitFullscreen();
+          }
+        });
+      }
+
+      document.addEventListener('fullscreenchange', () => {
+        if (fsBtn) {
+          if (document.fullscreenElement) {
+            fsBtn.innerText = "Exit Fullscreen";
+          } else {
+            fsBtn.innerText = "View Fullscreen";
+          }
+        }
       });
     }
 
@@ -801,24 +1191,432 @@
 
       if (active) {
         freeOrbitActive = false;
-        controls.enabled = false;
-        scrollModeBtn.classList.add('active');
-        freeModeBtn.classList.remove('active');
-        scrollWrapper.style.opacity = '1';
-        scrollWrapper.style.pointerEvents = 'auto'; // Allows container to receive gestures and scroll normal page height
+
+        // Cleanly dispose OrbitControls to release touch-action locks in standard browsers
+        if (controls) {
+          currentLookAt.copy(controls.target);
+          controls.dispose();
+          controls = null;
+        }
+
+        // Ensure browser default touch-action is restored
+        renderer.domElement.style.touchAction = 'auto';
+        if (renderer.domElement.parentElement) {
+          renderer.domElement.parentElement.style.touchAction = 'auto';
+        }
+
+        if (scrollModeBtn) scrollModeBtn.classList.add('active');
+        if (freeModeBtn) freeModeBtn.classList.remove('active');
+        if (scrollWrapper) {
+          scrollWrapper.style.opacity = '1';
+          scrollWrapper.style.pointerEvents = 'auto'; // Allows container to receive gestures and scroll normal page height
+        }
 
         // Re-align spatial coordinates with current scroll settings
         onPageScroll();
-        showToast("Cinematic Scroll Mode Active");
       } else {
         freeOrbitActive = true;
-        controls.enabled = true;
-        scrollModeBtn.classList.remove('active');
-        freeModeBtn.classList.add('active');
-        scrollWrapper.style.opacity = '0.15';
-        scrollWrapper.style.pointerEvents = 'none'; // Bypasses scrolling layer so touches fallback to OrbitControls canvas
+
+        // Dynamically instantiate OrbitControls only when Free Orbit is selected
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.target.copy(currentLookAt);
+        controls.update();
+
+        if (scrollModeBtn) scrollModeBtn.classList.remove('active');
+        if (freeModeBtn) freeModeBtn.classList.add('active');
+        if (scrollWrapper) {
+          scrollWrapper.style.opacity = '0.15';
+          scrollWrapper.style.pointerEvents = 'none'; // Bypasses scrolling overlay so touch sweeps reach the canvas
+        }
         showToast("Free Orbit Activated: Drag to rotate");
       }
+    }
+
+    // Setup micro-interactions for skill rows and 3D card tilt
+    function setupGSAPInteractivity() {
+      // 1. Interactive 3D physical card tilt on mouse move
+      document.querySelectorAll('.skill-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const xc = rect.width / 2;
+          const yc = rect.height / 2;
+          
+          // Subtle, professional level tilt ranges
+          const angleX = (yc - y) / 12; 
+          const angleY = (x - xc) / 12;
+
+          gsap.to(card, {
+            rotateX: angleX,
+            rotateY: angleY,
+            transformPerspective: 1000,
+            translateY: -8,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        });
+
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, {
+            rotateX: 0,
+            rotateY: 0,
+            translateY: 0,
+            duration: 0.8,
+            ease: "elastic.out(1, 0.4)"
+          });
+        });
+      });
+
+      // 2. Row level active vector highlight timelines
+      document.querySelectorAll('.skill-row').forEach(row => {
+        const icon = row.querySelector('.tech-icon');
+        const name = row.querySelector('.skill-name');
+        const stars = row.querySelector('.stars-container');
+
+        row.addEventListener('mouseenter', () => {
+          if (icon) {
+            gsap.to(icon, {
+              scale: 1.25,
+              rotation: 8,
+              duration: 0.35,
+              ease: "back.out(1.7)",
+              filter: "drop-shadow(0 0 8px rgba(244, 63, 94, 0.85))"
+            });
+          }
+          if (name) {
+            gsap.to(name, {
+              x: 6,
+              color: "#fda4af",
+              duration: 0.3,
+              ease: "power1.out"
+            });
+          }
+          if (stars) {
+            gsap.to(stars, {
+              scale: 1.08,
+              duration: 0.3,
+              ease: "power1.out"
+            });
+          }
+        });
+
+        row.addEventListener('mouseleave', () => {
+          if (icon) {
+            gsap.to(icon, {
+              scale: 1.0,
+              rotation: 0,
+              duration: 0.5,
+              ease: "power2.out",
+              filter: "none"
+            });
+          }
+          if (name) {
+            gsap.to(name, {
+              x: 0,
+              color: "#cbd5e1",
+              duration: 0.4,
+              ease: "power2.out"
+            });
+          }
+          if (stars) {
+            gsap.to(stars, {
+              scale: 1.0,
+              duration: 0.4,
+              ease: "power2.out"
+            });
+          }
+        });
+      });
+    }
+
+    // Dynamic Cherry Blossom Petal Spawning & Realistic Living Tree Shake Mechanics
+    function setupCherryCards() {
+      document.querySelectorAll('.skill-card').forEach(card => {
+        // Create container for petals
+        const container = document.createElement('div');
+        container.className = 'petal-container';
+        card.appendChild(container);
+
+        let isHovered = false;
+        let tiltX = 0, tiltY = 0;
+        let targetTiltX = 0, targetTiltY = 0;
+        let shakeIntensity = 0; 
+        let time = 0;
+        
+        // Mouse velocity tracking
+        let lastX = 0;
+        let lastY = 0;
+        let lastTime = Date.now();
+
+        // Staggered shedding timeouts array
+        let activeTimeouts = [];
+        let hoverStartTime = 0;
+
+        // Populate initial resting petals sitting on top of branches before shake
+        createRestingPetals(card, container);
+
+        function createRestingPetals(targetCard, targetContainer) {
+          // Clear any current remnants
+          targetContainer.querySelectorAll('.resting-petal').forEach(p => p.remove());
+
+          const cardWidth = targetCard.offsetWidth || 380;
+          const cardHeight = targetCard.offsetHeight || 200;
+
+          const count = Math.floor(Math.random() * 6) + 12; // 12 to 17 resting leaves
+          for (let i = 0; i < count; i++) {
+            const petal = document.createElement('div');
+            petal.className = 'cherry-petal resting-petal fade-in';
+
+            const size = Math.random() * 8 + 7; // 7px to 15px leaf scale
+
+            // Cluster coordinates: some along top edge, some near the top-right SVG branch
+            let startX, startY;
+            if (Math.random() < 0.65) {
+              // Top-right branch cluster
+              startX = cardWidth - (Math.random() * 110 + 10);
+              startY = Math.random() * 45 - 10;
+            } else {
+              // General spread along the top edge
+              startX = Math.random() * (cardWidth - 40) + 20;
+              startY = Math.random() * 15 - 10;
+            }
+
+            const restRot = (Math.random() - 0.5) * 120; // default landing angle
+            const restScale = Math.random() * 0.3 + 0.8; // default landing scale
+
+            petal.style.width = `${size}px`;
+            petal.style.height = `${size * 1.3}px`;
+            petal.style.left = `${startX}px`;
+            petal.style.top = `${startY}px`;
+            petal.style.setProperty('--rest-rot', `${restRot}deg`);
+            petal.style.setProperty('--rest-scale', `${restScale}`);
+
+            targetContainer.appendChild(petal);
+          }
+        }
+
+        // Mouse displacement velocity calculation
+        card.addEventListener('mousemove', (e) => {
+          const now = Date.now();
+          const dt = now - lastTime;
+          if (dt > 0) {
+            const dx = e.clientX - lastX;
+            const dy = e.clientY - lastY;
+            const speed = Math.sqrt(dx * dx + dy * dy) / dt; // pixels per millisecond
+
+            // Cursor moves rapidly (shaking the tree branch)
+            if (speed > 0.8) {
+              // Increase shake intensity proportionally
+              shakeIntensity = Math.min(shakeIntensity + speed * 0.3, 1.2);
+              
+              // Spawn extra leaves immediately due to structural shake
+              const extraSpawns = Math.floor(speed * 3);
+              for (let i = 0; i < extraSpawns; i++) {
+                spawnPetal(true);
+              }
+            }
+
+            lastX = e.clientX;
+            lastY = e.clientY;
+            lastTime = now;
+          }
+
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left; 
+          const y = e.clientY - rect.top;  
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          // Target 3D hover orientation tilt vectors
+          targetTiltY = ((x - centerX) / centerX) * 10;
+          targetTiltX = ((centerY - y) / centerY) * 10;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          isHovered = false;
+          shakeIntensity = 0;
+          
+          // Clear active timeouts to avoid orphan petal falls
+          activeTimeouts.forEach(clearTimeout);
+          activeTimeouts = [];
+
+          // Return the WebGL scene scale to original values
+          gsap.to(workspaceModelsGroup.scale, {
+            x: 1.0,
+            y: 1.0,
+            z: 1.0,
+            duration: 0.8,
+            ease: "elastic.out(1, 0.5)"
+          });
+          gsap.to(directionalLight, {
+            intensity: 0.1,
+            duration: 0.5
+          });
+
+          // Regenerate fresh resting petals on top of branches after a delay
+          setTimeout(() => {
+            if (!isHovered) {
+              createRestingPetals(card, container);
+            }
+          }, 850);
+
+          // Clear transformations smoothly
+          card.style.transform = '';
+          tiltX = 0;
+          tiltY = 0;
+          targetTiltX = 0;
+          targetTiltY = 0;
+        });
+
+        function spawnPetal(isInitialBurst = false) {
+          const petal = document.createElement('div');
+          petal.className = 'cherry-petal';
+
+          const size = Math.random() * 8 + 6; 
+          const startX = Math.random() * card.offsetWidth;
+          
+          const startY = isInitialBurst ? (Math.random() * card.offsetHeight * 0.4) - 15 : Math.random() * 20 - 20;
+          
+          const fallDist = Math.random() * 200 + 400; // 400px to 600px fall depth
+          const swayDist = (Math.random() - 0.5) * 200; // Wind drag sway variance
+          
+          // Realistic 3D rotational values
+          const rotX = (Math.random() - 0.5) * 1080; 
+          const rotY = (Math.random() - 0.5) * 1080;
+          const rotZ = (Math.random() - 0.5) * 360;
+          
+          const duration = Math.random() * 2.5 + 2.0; // organic floating time duration
+
+          petal.style.width = `${size}px`;
+          petal.style.height = `${size * 1.3}px`; 
+          petal.style.left = `${startX}px`;
+          petal.style.top = `${startY}px`;
+          petal.style.setProperty('--sway-distance', `${swayDist}px`);
+          petal.style.setProperty('--fall-distance', `${fallDist}px`);
+          petal.style.setProperty('--rot-x', `${rotX}deg`);
+          petal.style.setProperty('--rot-y', `${rotY}deg`);
+          petal.style.setProperty('--rot-z', `${rotZ}deg`);
+          petal.style.animationName = 'fall-and-tumble';
+          petal.style.animationDuration = `${duration}s`;
+          petal.style.animationTimingFunction = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'; // Realistic ease-out drift
+
+          container.appendChild(petal);
+
+          setTimeout(() => {
+            petal.remove();
+          }, duration * 1000);
+        }
+
+        // Logic for decaying rate of continuous shedding
+        function triggerSheddingFlow() {
+          if (!isHovered) return;
+
+          const elapsed = Date.now() - hoverStartTime;
+          const probability = Math.exp(-elapsed / 1500); 
+          const delay = 100 + (1 - probability) * 1200; 
+          
+          if (Math.random() < (probability * 0.8 + 0.15)) {
+            spawnPetal(false);
+          }
+
+          const timeoutId = setTimeout(triggerSheddingFlow, delay);
+          activeTimeouts.push(timeoutId);
+        }
+
+        // Hover trigger logic
+        card.addEventListener('mouseenter', (e) => {
+          isHovered = true;
+          hoverStartTime = Date.now();
+          
+          // Trigger impact physical shake intensity
+          shakeIntensity = 1.0; 
+          
+          lastX = e.clientX;
+          lastY = e.clientY;
+          lastTime = Date.now();
+
+          // Detach and shed pre-existing resting petals
+          container.querySelectorAll('.resting-petal').forEach((petal, index) => {
+            petal.classList.remove('fade-in');
+
+            const fallDist = Math.random() * 200 + 400;
+            const swayDist = (Math.random() - 0.5) * 200;
+            const rotX = (Math.random() - 0.5) * 1080;
+            const rotY = (Math.random() - 0.5) * 1080;
+            const rotZ = (Math.random() - 0.5) * 360;
+            const duration = Math.random() * 2.0 + 1.8;
+
+            petal.style.setProperty('--sway-distance', `${swayDist}px`);
+            petal.style.setProperty('--fall-distance', `${fallDist}px`);
+            petal.style.setProperty('--rot-x', `${rotX}deg`);
+            petal.style.setProperty('--rot-y', `${rotY}deg`);
+            petal.style.setProperty('--rot-z', `${rotZ}deg`);
+
+            // Begin tumble animations
+            petal.style.animationName = 'fall-and-tumble';
+            petal.style.animationDuration = `${duration}s`;
+            petal.style.animationTimingFunction = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            petal.style.animationFillMode = 'forwards';
+            
+            // Stagger actual detaching delay
+            petal.style.animationDelay = `${index * 15}ms`;
+
+            // Remove node after float falls away
+            setTimeout(() => {
+              petal.remove();
+            }, (duration + (index * 0.015)) * 1000);
+          });
+
+          // Begin the decaying continuous trickle loop
+          triggerSheddingFlow();
+
+          // Scale the WebGL scene objects in response to mouse enter
+          gsap.to(workspaceModelsGroup.scale, {
+            x: 1.08,
+            y: 1.08,
+            z: 1.08,
+            duration: 0.5,
+            ease: "power2.out"
+          });
+          gsap.to(directionalLight, {
+            intensity: 0.35,
+            duration: 0.3
+          });
+          
+          requestAnimationFrame(updateCardPhysics);
+        });
+
+        // Spring physical animation system loop
+        function updateCardPhysics() {
+          if (!isHovered) return;
+
+          time += 0.1;
+
+          // Dampen shake intensity exponentially
+          shakeIntensity *= 0.94; 
+          if (shakeIntensity < 0.01) {
+            shakeIntensity = 0.05; // Gentle baseline rustle from surrounding wind
+          }
+
+          // Dynamic structural recoil formula
+          const freq = 45; // High-frequency physical rustle speed
+          const shakeX = Math.sin(time * freq) * 7 * shakeIntensity;
+          const shakeY = Math.cos(time * (freq * 0.8)) * 5 * shakeIntensity;
+          const shakeRotZ = Math.sin(time * (freq * 1.1)) * 3 * shakeIntensity;
+
+          // Merge physical shake mechanics with structural 3D tilt transformations
+          gsap.set(card, {
+            x: shakeX,
+            y: shakeY,
+            z: Math.sin(time) * 10 * shakeIntensity
+          });
+
+          requestAnimationFrame(updateCardPhysics);
+        }
+      });
     }
 
     // Handles the procedural micro-animations of scene objects
@@ -855,8 +1653,10 @@
       // Mesh animations
       runObjectMicroAnimations(delta);
 
-      if (freeOrbitActive) {
+      if (freeOrbitActive && controls) {
         controls.update();
+      } else {
+        camera.lookAt(currentLookAt);
       }
 
       renderer.render(scene, camera);
