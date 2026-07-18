@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spatial Engineering Showcase & Interactive Portfolio</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body, html {
+      width: 100%;
+      background-color: #06060c;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      overflow-x: hidden;
+    }
+    
+    /* Fullscreen WebGL Background canvas */
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      background: radial-gradient(circle at center, #11111a 0%, #06060c 100%);
+    }
+
+    /* Cinematic Foreground Scrolling Wrapper */
+    #scroll-wrapper {
+      position: relative;
+      width: 100%;
+      z-index: 10;
+      pointer-events: auto; /* Must start as auto to capture native scroll actions */
+    }
+
+    /* Fixed Navigation Header Overlay */
+    #portfolio-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: linear-gradient(to bottom, rgba(6, 6, 12, 0.8) 0%, rgba(6, 6, 12, 0) 100%);
+      backdrop-filter: blur(4px);
+    }
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #3b82f6;
+    }
+    .mode-toggle-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: auto;
+    }
+    .toggle-btn {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #94a3b8;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .toggle-btn:hover {
+      border-color: #3b82f6;
+      color: #f8fafc;
+    }
+    .toggle-btn.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #3b82f6;
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Height blocks mapping scroll positions to waypoints */
+    .scroll-section {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 0 10%;
+    }
+    .scroll-section:nth-child(even) {
+      justify-content: flex-end;
+    }
+    .scroll-section:nth-child(odd) {
+      justify-content: flex-start;
+    }
+
+    /* Dynamic Glassmorphism cards */
+    .skill-card {
+      pointer-events: auto;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 32px;
+      border-radius: 16px;
+      max-width: 440px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+    }
+    .scroll-section.active .skill-card {
+      opacity: 1;
+      transform: translateY(0);
+      border-color: rgba(59, 130, 246, 0.35);
+    }
+    .skill-card h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #3b82f6;
+      margin-bottom: 8px;
+    }
+    .skill-card h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 12px;
+    }
+    .skill-card p {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    /* Vertical Navigation Dots stream */
+    #scroll-dots {
+      position: fixed;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      pointer-events: auto;
+    }
+    .dot-node {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .dot-node:hover {
+      background: #3b82f6;
+    }
+    .dot-node.active {
+      background: #2563eb;
+      transform: scale(1.3);
+      box-shadow: 0 0 10px rgba(37, 99, 235, 0.6);
+    }
+
+    /* Scroll Down visual indicator */
+    #scroll-indicator {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: #94a3b8;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    .mouse-wheel {
+      width: 20px;
+      height: 32px;
+      border: 2px solid #94a3b8;
+      border-radius: 10px;
+      position: relative;
+    }
+    .mouse-wheel::before {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 8px;
+      background-color: #3b82f6;
+      border-radius: 2px;
+      animation: scroll-ping 1.5s infinite;
+    }
+    @keyframes scroll-ping {
+      0% { opacity: 1; transform: translate(-50%, 0); }
+      100% { opacity: 0; transform: translate(-50%, 10px); }
+    }
+
+    /* Interface overlays */
+    #loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #06060c;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(59, 130, 246, 0.1);
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #notification-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 10px 18px;
+      border-radius: 8px;
+      z-index: 1000;
+      font-size: 11px;
+      color: #e2e8f0;
+      display: none;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Responsive media rules */
+    @media (max-width: 768px) {
+      .scroll-section {
+        padding: 0 20px;
+        justify-content: center !important;
+      }
+      .skill-card {
+        padding: 24px;
+        max-width: 100%;
+      }
+      #scroll-dots {
+        right: 15px;
+      }
+      #portfolio-header {
+        padding: 15px 20px;
+      }
+    }
+  </style>
+
+  <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.150.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.150.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Loading State Panel -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <span id="loading-text" style="font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">Initializing Spatial Arena...</span>
+  </div>
+
+  <!-- Main Viewport Canvas -->
+  <div id="canvas-container"></div>
+
+  <!-- Persistent Workspace Header -->
+  <div id="portfolio-header">
+    <div class="brand-title">Creative Spatial Lab</div>
+    <div class="mode-toggle-container">
+      <button id="mode-scroll" class="toggle-btn active">Scroll Story</button>
+      <button id="mode-free" class="toggle-btn">Free Orbit</button>
+    </div>
+  </div>
+
+  <!-- Global Vertical Progress Dots -->
+  <div id="scroll-dots"></div>
+
+  <!-- Floating Scroll indicator -->
+  <div id="scroll-indicator">
+    <div class="mouse-wheel"></div>
+    <span>Scroll to Explore</span>
+  </div>
+
+  <!-- Immersive Cinematic Scrolling Sections -->
+  <div id="scroll-wrapper">
+    <div class="scroll-section" id="section-0">
+      <div class="skill-card">
+        <h3>Waypoint 01</h3>
+        <h2>Creative Vision</h2>
+        <p>Combining design principles and spatial technology to construct interactive experiences that engage users in full 3D space.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-1">
+      <div class="skill-card">
+        <h3>Waypoint 02</h3>
+        <h2>WebGL & Three.js</h2>
+        <p>Developing low-overhead, GPU-accelerated graphic models inside desktop and mobile browsers with native browser engines.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-2">
+      <div class="skill-card">
+        <h3>Waypoint 03</h3>
+        <h2>Spatial Layouts</h2>
+        <p>Distributing dynamic complex models in physical spaces, using responsive viewport transformations to scale seamlessly.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-3">
+      <div class="skill-card">
+        <h3>Waypoint 04</h3>
+        <h2>Advanced Materials</h2>
+        <p>Utilizing high-end shader modifications, realistic textures, and physical standard materials to define visual properties.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-4">
+      <div class="skill-card">
+        <h3>Waypoint 05</h3>
+        <h2>Interactivity & Raycasting</h2>
+        <p>Designing custom point calculation algorithms, collision boundaries, and hover actions across dense model spaces.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-5">
+      <div class="skill-card">
+        <h3>Waypoint 06</h3>
+        <h2>Lighting Engineering</h2>
+        <p>Balancing ambient light and direction elements to create depth, casting soft real-time depth shadows across assets.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-6">
+      <div class="skill-card">
+        <h3>Waypoint 07</h3>
+        <h2>Camera Timelines</h2>
+        <p>Configuring coordinate pathways, managing complex focal nodes, and easing camera motion along spatial curves.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-7">
+      <div class="skill-card">
+        <h3>Waypoint 08</h3>
+        <h2>Dynamic Motion</h2>
+        <p>Implementing procedural animations, coordinate loops, and rotational physics to keep standard elements feeling alive.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-8">
+      <div class="skill-card">
+        <h3>Waypoint 09</h3>
+        <h2>Asset Optimization</h2>
+        <p>Compressing geometry sizes, controlling draw call triggers, and handling model instances safely to preserve browser framerate.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-10">
+      <div class="skill-card">
+        <h3>Waypoint 10</h3>
+        <h2>Responsive Viewports</h2>
+        <p>Applying aspect-ratio correction systems dynamically, ensuring full-canvas experiences work smoothly across all screen ratios.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-11">
+      <div class="skill-card">
+        <h3>Waypoint 11</h3>
+        <h2>Continuous Integration</h2>
+        <p>Synthesizing spatial environments and interactive code, wrapping them cleanly into production-ready web designs.</p>
+      </div>
+    </div>
+    <div class="scroll-section" id="section-12">
+      <div class="skill-card">
+        <h3>Waypoint 12</h3>
+        <h2>The Finished Composition</h2>
+        <p>Bringing all physical, code, and design variables into a polished portfolio, demonstrating spatial web engineering.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="notification-toast">Workspace Ready</div>
+
+  <!-- THREE.JS RUNTIME -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'; 
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // Core variables
+    let scene, camera, renderer, controls, clock;
+    let ambientLight, directionalLight;
+    let workspaceModelsGroup;
+
+    // Camera waypoint values from skills.json
+    const WAYPOINTS = [
+      {
+        "pos": [0.7443983932041797, 1.399862446093395, -1.0177532383406969],
+        "target": [-0.4437977292651064, 1.2323065756851708, -0.12214762361305545]
+      },
+      {
+        "pos": [-0.6818938156371508, 1.8333016244504448, -1.4727436433935677],
+        "target": [-0.44379772752179525, 1.2323065753053668, -0.1221476208841582]
+      },
+      {
+        "pos": [-1.0945293710339026, 1.65192354079197, 0.08831478156925375],
+        "target": [-0.3932036812157214, 1.3103276829062953, -0.07929163390234457]
+      },
+      {
+        "pos": [-0.2215251700178958, 1.358370409055726, 0.5383422704920537],
+        "target": [-0.24707338483706973, 1.25269446080833, -0.06378135150826038]
+      },
+      {
+        "pos": [-0.4662674217762476, 1.2508390691923676, -0.3815539658678175],
+        "target": [-0.3219287094131729, 1.2883876329966941, -0.0362760891490478]
+      },
+      {
+        "pos": [-0.4365279003488767, 1.397302470186913, 0.1546056340038297],
+        "target": [-0.27040490013715457, 1.3412442610339925, 0.08733361929887715]
+      },
+      {
+        "pos": [-0.20883729587943362, 1.3243787520557337, 0.262960383133314],
+        "target": [-0.172505415678244, 1.3156939358859898, 0.11612582994747757]
+      },
+      {
+        "pos": [0.1073129904210154, 1.340801403692325, 0.36423533205268677],
+        "target": [-0.1228550797513122, 1.3126936257679631, 0.07839094387213043]
+      },
+      {
+        "pos": [-0.02578083306711665, 1.3086377867098324, -0.27521097305108444],
+        "target": [-0.12417074723891627, 1.3128389252513482, 0.07943839912548713]
+      },
+      {
+        "pos": [-0.45859994002894133, 1.5177909560350626, -0.3296833586517661],
+        "target": [-0.08179900955898894, 1.329281790312239, 0.04348087948550014]
+      },
+      {
+        "pos": [-0.09923779865556434, 1.3102962394499427, 0.38433753272163884],
+        "target": [-0.07341353755066768, 1.316658347855162, 0.04405157786034033]
+      },
+      {
+        "pos": [0.6835448403717217, 1.4290411374586063, 0.6775231982685418],
+        "target": [-0.0373249792786195, 1.3225573492182527, 0.0018230503934674339]
+      }
+    ];
+
+    // Scroll interpolation engines
+    let scrollProgress = 0;
+    let targetScrollProgress = 0;
+    const lerpFactor = 0.05; // Smoothing intensity
+    let currentWaypointIndex = 0;
+    
+    // Core state switches
+    let freeOrbitActive = false;
+
+    init();
+    animate();
+
+    function init() {
+      clock = new THREE.Clock();
+
+      // Core Scene Container
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x06060c);
+      scene.fog = new THREE.FogExp2(0x06060c, 0.035);
+
+      // Camera initialization using the first waypoint
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+      const startWp = WAYPOINTS[0];
+      camera.position.set(startWp.pos[0], startWp.pos[1], startWp.pos[2]);
+
+      // WebGL Renderer configurations
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+      // Models Group configuration
+      workspaceModelsGroup = new THREE.Group();
+      scene.add(workspaceModelsGroup);
+
+      // Orbit Controller Setup
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.target.set(startWp.target[0], startWp.target[1], startWp.target[2]);
+      controls.enabled = false; // Initially controlled by scroll progress
+
+      // Ambient Lighting Setup: User requested 1.5x scale
+      ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+      scene.add(ambientLight);
+
+      // Directional Lighting Setup: User requested 0.1x scale
+      directionalLight = new THREE.DirectionalLight(0xffffff, 0.1);
+      directionalLight.position.set(5, 10, 5);
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 1024;
+      directionalLight.shadow.mapSize.height = 1024;
+      directionalLight.shadow.bias = -0.001;
+      scene.add(directionalLight);
+
+      // Ground plane setup for smooth shadow projection
+      const floorGeo = new THREE.PlaneGeometry(100, 100);
+      const floorMat = new THREE.ShadowMaterial({ opacity: 0.35 });
+      const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+      floorMesh.rotation.x = -Math.PI / 2;
+      floorMesh.position.y = -0.02;
+      floorMesh.receiveShadow = true;
+      scene.add(floorMesh);
+
+      // Generate Navigation Dot Indicators
+      buildDotNavigation();
+
+      // Load Assets Setup
+      loadPortfolioAssets();
+
+      // Event Observers
+      window.addEventListener('resize', onWindowResize);
+      window.addEventListener('scroll', onPageScroll);
+
+      // Bind Mode Click Interfaces
+      setupUserInteractionEvents();
+
+      // Initialize default scroll mode states and active layout properties
+      setCinematicScrollMode(true);
+    }
+
+    // Handles the core asset loading pipeline
+    function loadPortfolioAssets() {
+      const loader = new GLTFLoader();
+
+      // Initialize Draco Decoder
+      const dracoLoader = new DRACOLoader();
+      dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.5/'); // Direct fallback to Google's CDN
+      loader.setDRACOLoader(dracoLoader);
+
+      const textOverlay = document.getElementById('loading-text');
+
+      // Loads skills.glb using its native coordinates, matching exactly how GLTFLoader behaves in the original workspace.
+      loader.load(
+        'skills.glb',
+        (gltf) => {
+          hideLoadingPanel();
+          const loadedModel = gltf.scene;
+          loadedModel.name = "Portfolio_Skills_Model";
+
+          loadedModel.traverse(node => {
+            if (node.isMesh) {
+              node.castShadow = true;
+              node.receiveShadow = true;
+              if (node.material) {
+                node.material.roughness = Math.max(node.material.roughness, 0.15);
+              }
+            }
+          });
+
+          workspaceModelsGroup.add(loadedModel);
+          showToast("Loaded skills.glb successfully");
+        },
+        (xhr) => {
+          if (xhr.total > 0) {
+            const percent = Math.round((xhr.loaded / xhr.total) * 100);
+            textOverlay.innerText = `Assembling model structures... ${percent}%`;
+          }
+        },
+        (error) => {
+          // Output failure details directly to the F12 console
+          console.error("Critical GLTF Loading Error details:", error);
+          
+          hideLoadingPanel();
+          loadProceduralFallbackStructure();
+        }
+      );
+    }
+
+    // Creates a geometric mechanical core when skills.glb is unavailable
+    function loadProceduralFallbackStructure() {
+      const group = new THREE.Group();
+      group.name = "Procedural_Reactor";
+
+      // Pedestal core base
+      const baseGeo = new THREE.CylinderGeometry(1.5, 1.7, 0.3, 32);
+      const baseMat = new THREE.MeshStandardMaterial({
+        color: 0x111827,
+        metalness: 0.95,
+        roughness: 0.1
+      });
+      const baseMesh = new THREE.Mesh(baseGeo, baseMat);
+      baseMesh.position.y = 0.15;
+      baseMesh.castShadow = true;
+      baseMesh.receiveShadow = true;
+      group.add(baseMesh);
+
+      // Central dynamic core node
+      const cylinderGeo = new THREE.CylinderGeometry(0.6, 0.6, 1.4, 16);
+      const cylinderMat = new THREE.MeshStandardMaterial({
+        color: 0x0f172a,
+        metalness: 0.9,
+        roughness: 0.1
+      });
+      const corePillar = new THREE.Mesh(cylinderGeo, cylinderMat);
+      corePillar.position.y = 1.0;
+      corePillar.castShadow = true;
+      corePillar.receiveShadow = true;
+      group.add(corePillar);
+
+      // Core power crystal
+      const coreGeo = new THREE.OctahedronGeometry(0.4, 0);
+      const coreMat = new THREE.MeshStandardMaterial({
+        color: 0x2563eb,
+        emissive: 0x3b82f6,
+        emissiveIntensity: 2.0,
+        metalness: 0.1,
+        roughness: 0.05
+      });
+      const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+      coreMesh.position.y = 1.3;
+      coreMesh.name = "GlowCoreCrystal";
+      group.add(coreMesh);
+
+      // Outer mechanical orbital ring
+      const ringGeo = new THREE.TorusGeometry(1.2, 0.06, 12, 48);
+      const ringMat = new THREE.MeshStandardMaterial({
+        color: 0x3b82f6,
+        metalness: 0.9,
+        roughness: 0.1
+      });
+      const dynamicRing = new THREE.Mesh(ringGeo, ringMat);
+      dynamicRing.rotation.x = Math.PI / 2;
+      dynamicRing.position.y = 1.3;
+      dynamicRing.name = "GlowCoreRing";
+      group.add(dynamicRing);
+
+      workspaceModelsGroup.add(group);
+      showToast("Using procedural fallback core");
+    }
+
+    // Handles the calculation of scroll percentage
+    function onPageScroll() {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight <= 0) return;
+
+      const currentScroll = window.scrollY;
+      targetScrollProgress = currentScroll / scrollHeight;
+
+      // Toggle display of the floating 'Scroll' guide card beyond initial step
+      const indicator = document.getElementById('scroll-indicator');
+      if (currentScroll > 50) {
+        indicator.style.opacity = '0';
+      } else {
+        indicator.style.opacity = '1';
+      }
+    }
+
+    // Coordinates the camera's spatial coordinates using progress interpolations
+    function updateCameraSpatialInterpolation() {
+      if (freeOrbitActive) return;
+
+      // Apply linear interpolation on progress rate to eliminate scrolling jitters
+      scrollProgress += (targetScrollProgress - scrollProgress) * lerpFactor;
+
+      const totalWaypoints = WAYPOINTS.length;
+      const scaledVal = scrollProgress * (totalWaypoints - 1);
+      const segmentIndex = Math.floor(scaledVal);
+      const localProgress = scaledVal - segmentIndex;
+
+      let targetPos = new THREE.Vector3();
+      let targetFocus = new THREE.Vector3();
+
+      if (segmentIndex >= totalWaypoints - 1) {
+        const lastWp = WAYPOINTS[totalWaypoints - 1];
+        targetPos.set(lastWp.pos[0], lastWp.pos[1], lastWp.pos[2]);
+        targetFocus.set(lastWp.target[0], lastWp.target[1], lastWp.target[2]);
+        currentWaypointIndex = totalWaypoints - 1;
+      } else {
+        const currentWp = WAYPOINTS[segmentIndex];
+        const nextWp = WAYPOINTS[segmentIndex + 1];
+
+        // Linearly interpolate camera coordinates between the two nearest nodes
+        const pStart = new THREE.Vector3(currentWp.pos[0], currentWp.pos[1], currentWp.pos[2]);
+        const pEnd = new THREE.Vector3(nextWp.pos[0], nextWp.pos[1], nextWp.pos[2]);
+        targetPos.lerpVectors(pStart, pEnd, localProgress);
+
+        // Linearly interpolate camera center focal points
+        const fStart = new THREE.Vector3(currentWp.target[0], currentWp.target[1], currentWp.target[2]);
+        const fEnd = new THREE.Vector3(nextWp.target[0], nextWp.target[1], nextWp.target[2]);
+        targetFocus.lerpVectors(fStart, fEnd, localProgress);
+
+        currentWaypointIndex = Math.round(scaledVal);
+      }
+
+      // Smoothly update camera vectors
+      camera.position.copy(targetPos);
+      controls.target.copy(targetFocus);
+      controls.update();
+
+      // Trigger section transitions
+      updateDOMElementsStates();
+    }
+
+    // Handles element class toggles based on the current scroll step index
+    function updateDOMElementsStates() {
+      const sections = document.querySelectorAll('.scroll-section');
+      const dots = document.querySelectorAll('.dot-node');
+
+      sections.forEach((section, idx) => {
+        if (idx === currentWaypointIndex) {
+          section.classList.add('active');
+        } else {
+          section.classList.remove('active');
+        }
+      });
+
+      dots.forEach((dot, idx) => {
+        if (idx === currentWaypointIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+
+    // Creates the lateral navigation dot node array
+    function buildDotNavigation() {
+      const container = document.getElementById('scroll-dots');
+      container.innerHTML = '';
+
+      WAYPOINTS.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        dot.className = 'dot-node';
+        if (idx === 0) dot.classList.add('active');
+        dot.dataset.index = idx;
+
+        // Smooth scroll transition click triggers
+        dot.addEventListener('click', () => {
+          const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const targetY = (idx / (WAYPOINTS.length - 1)) * scrollHeight;
+
+          // Snap to cinematic mode if navigation indicators are clicked
+          if (freeOrbitActive) {
+            setCinematicScrollMode(true);
+          }
+
+          window.scrollTo({
+            top: targetY,
+            behavior: 'smooth'
+          });
+        });
+
+        container.appendChild(dot);
+      });
+    }
+
+    // Sets up mode-specific UI configurations
+    function setupUserInteractionEvents() {
+      const scrollModeBtn = document.getElementById('mode-scroll');
+      const freeModeBtn = document.getElementById('mode-free');
+
+      scrollModeBtn.addEventListener('click', () => {
+        setCinematicScrollMode(true);
+      });
+
+      freeModeBtn.addEventListener('click', () => {
+        setCinematicScrollMode(false);
+      });
+    }
+
+    // Toggles interface behaviors between story scroll and orbit controls
+    function setCinematicScrollMode(active) {
+      const scrollModeBtn = document.getElementById('mode-scroll');
+      const freeModeBtn = document.getElementById('mode-free');
+      const scrollWrapper = document.getElementById('scroll-wrapper');
+
+      if (active) {
+        freeOrbitActive = false;
+        controls.enabled = false;
+        scrollModeBtn.classList.add('active');
+        freeModeBtn.classList.remove('active');
+        scrollWrapper.style.opacity = '1';
+        scrollWrapper.style.pointerEvents = 'auto'; // Allows container to receive gestures and scroll normal page height
+
+        // Re-align spatial coordinates with current scroll settings
+        onPageScroll();
+        showToast("Cinematic Scroll Mode Active");
+      } else {
+        freeOrbitActive = true;
+        controls.enabled = true;
+        scrollModeBtn.classList.remove('active');
+        freeModeBtn.classList.add('active');
+        scrollWrapper.style.opacity = '0.15';
+        scrollWrapper.style.pointerEvents = 'none'; // Bypasses scrolling layer so touches fallback to OrbitControls canvas
+        showToast("Free Orbit Activated: Drag to rotate");
+      }
+    }
+
+    // Handles the procedural micro-animations of scene objects
+    function runObjectMicroAnimations(delta) {
+      const model = workspaceModelsGroup.getObjectByName("Procedural_Reactor");
+      if (model) {
+        const elapsed = clock.getElapsedTime();
+        
+        // Ring orbital rotation
+        const ring = model.getObjectByName("GlowCoreRing");
+        if (ring) {
+          ring.rotation.y += delta * 0.7;
+          ring.rotation.x += delta * 0.3;
+        }
+
+        // Crystal rotation & hovering offset
+        const crystal = model.getObjectByName("GlowCoreCrystal");
+        if (crystal) {
+          crystal.rotation.y -= delta * 0.5;
+          crystal.position.y = 1.3 + Math.sin(elapsed * 2.0) * 0.08;
+        }
+      }
+    }
+
+    // Core animation frame loops
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const delta = clock.getDelta();
+
+      // Camera transitions
+      updateCameraSpatialInterpolation();
+
+      // Mesh animations
+      runObjectMicroAnimations(delta);
+
+      if (freeOrbitActive) {
+        controls.update();
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function hideLoadingPanel() {
+      const panel = document.getElementById('loading-overlay');
+      panel.style.opacity = '0';
+      setTimeout(() => {
+        panel.style.display = 'none';
+      }, 500);
+    }
+
+    function showToast(message) {
+      const el = document.getElementById('notification-toast');
+      el.innerText = message;
+      el.style.display = 'block';
+      setTimeout(() => {
+        el.style.display = 'none';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
