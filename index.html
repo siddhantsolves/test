@@ -4,22 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Spatial Engineering Showcase & Interactive Portfolio</title>
+  
+  <!-- Retro Fonts for Loader & Clean Fonts for Portfolio -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      user-select: none;
     }
     body, html {
       width: 100%;
+      height: 100%;
       background-color: #06060c;
       color: #e2e8f0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       overflow-x: hidden;
     }
-    
-    /* Fullscreen WebGL Background canvas */
-    #canvas-container {
+
+    /* ----------------------------------------------------
+       WebGL Containers
+       ---------------------------------------------------- */
+    #canvas-container-portfolio {
       position: fixed;
       top: 0;
       left: 0;
@@ -29,7 +37,243 @@
       background: radial-gradient(circle at center, #110d18 0%, #06060c 100%);
     }
 
-    /* Floating Fullscreen Trigger Button */
+    #canvas-container-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 15;
+    }
+
+    /* ----------------------------------------------------
+       Arcade Loader Elements
+       ---------------------------------------------------- */
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.3) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 99;
+      pointer-events: none;
+    }
+
+    #hud, #start-screen, #game-over-screen, #proceed-banner, #mobile-controls {
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    #hud {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      color: #00ffff;
+      text-shadow: 0 0 10px #00ffff;
+      font-size: 11px;
+      z-index: 25;
+      pointer-events: none;
+    }
+
+    .hud-panel {
+      background: rgba(10, 5, 25, 0.85);
+      padding: 10px 15px;
+      border: 2px solid #00ffff;
+      border-radius: 4px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #speed-box {
+      color: #ff0055;
+      text-shadow: 0 0 10px #ff0055;
+      border-color: #ff0055;
+      box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
+    }
+
+    #loading-box {
+      flex-grow: 1;
+      margin: 0 15px;
+      border-color: #ffff00;
+      color: #ffff00;
+      text-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+      box-shadow: 0 0 15px rgba(255, 255, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    #proceed-banner {
+      position: absolute;
+      top: -160px; /* Start offscreen */
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 5, 25, 0.95);
+      border: 3px solid #00ffff;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+      padding: 15px 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 30;
+      border-radius: 8px;
+      text-align: center;
+      width: 90%;
+      max-width: 480px;
+      pointer-events: auto;
+    }
+
+    #proceed-banner .banner-title {
+      font-size: 10px;
+      color: #ffff00;
+      text-shadow: 0 0 5px #ffff00;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    #proceed-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      background: transparent;
+      color: #00ffff;
+      border: 2px solid #00ffff;
+      padding: 8px 16px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    #proceed-btn:hover {
+      background: #00ffff;
+      color: #050510;
+      box-shadow: 0 0 20px #00ffff;
+      transform: scale(1.05);
+    }
+
+    .loader-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(8, 3, 18, 0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1.arcade-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3.5rem;
+      color: #ff0055;
+      text-shadow: 0 0 20px #ff0055, 0 0 40px #ff0055;
+      margin-bottom: 5px;
+      letter-spacing: 4px;
+    }
+
+    h2.arcade-subtitle {
+      font-size: 1.1rem;
+      color: #00ffff;
+      text-shadow: 0 0 10px #00ffff;
+      margin-bottom: 40px;
+      letter-spacing: 2px;
+    }
+
+    .arcade-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      background: transparent;
+      color: #ffff00;
+      border: 3px solid #ffff00;
+      padding: 15px 30px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 255, 0, 0.4);
+      transition: all 0.2s ease;
+      outline: none;
+      border-radius: 4px;
+    }
+
+    .arcade-btn:hover {
+      background: #ffff00;
+      color: #050510;
+      box-shadow: 0 0 30px rgba(255, 255, 0, 0.8);
+      transform: scale(1.05);
+    }
+
+    #controls-hint {
+      margin-top: 30px;
+      font-size: 9px;
+      color: #888;
+      line-height: 1.8;
+    }
+
+    #game-over-screen {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #final-score {
+      font-size: 20px;
+      color: #ffff00;
+      text-shadow: 0 0 10px #ffff00;
+      margin-bottom: 30px;
+    }
+
+    #mobile-controls {
+      display: none;
+      position: absolute;
+      bottom: 30px;
+      left: 0;
+      width: 100%;
+      justify-content: space-between;
+      padding: 0 30px;
+      z-index: 25;
+      pointer-events: none;
+    }
+
+    .touch-btn {
+      pointer-events: auto;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(10, 5, 25, 0.8);
+      color: #fff;
+      border: 3px solid;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    #btn-left {
+      border-color: #00ffff;
+      color: #00ffff;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    #btn-right {
+      border-color: #ff0055;
+      color: #ff0055;
+      box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
+    }
+
+    /* ----------------------------------------------------
+       Portfolio Scene Elements
+       ---------------------------------------------------- */
     #fullscreen-btn {
       position: fixed;
       top: 25px;
@@ -56,15 +300,13 @@
       box-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
     }
 
-    /* Cinematic Foreground Scrolling Wrapper */
     #scroll-wrapper {
       position: relative;
       width: 100%;
       z-index: 10;
-      pointer-events: auto; /* Allow normal document scrolling gestures */
+      pointer-events: auto;
     }
 
-    /* Height blocks mapping scroll positions to waypoints */
     .scroll-section {
       height: 100vh;
       position: relative;
@@ -79,57 +321,41 @@
       justify-content: flex-start;
     }
 
-    /* ----------------------------------------------------
-       Specific Page Position Overrides to Focus on Model
-       ---------------------------------------------------- */
-    
-    /* Scene 1: Top-Right Alignment */
+    /* Target Page Positions to Focus on Model */
     #section-0 {
       justify-content: flex-end !important;
       align-items: flex-start !important;
       padding-top: 80px;
       padding-right: 12%;
     }
-
-    /* Scene 4: Left Alignment (Clear Cherry Tree Canopy on the Right) */
     #section-3 {
       justify-content: flex-start !important;
       align-items: center !important;
       padding-left: 8%;
     }
-
-    /* Scene 5: Right Alignment (Clear Bridge on the Left) */
     #section-4 {
       justify-content: flex-end !important;
       align-items: center !important;
       padding-right: 8%;
     }
-
-    /* Scene 7: Bottom-Left Alignment (Clear Bridge and Characters) */
     #section-6 {
       justify-content: flex-start !important;
       align-items: flex-end !important;
       padding-bottom: 80px;
       padding-left: 8%;
     }
-
-    /* Scene 9: Bottom-Left Alignment (Clear Characters on the Bridge) */
     #section-8 {
       justify-content: flex-start !important;
       align-items: flex-end !important;
       padding-bottom: 80px;
       padding-left: 8%;
     }
-
-    /* Scene 10: Bottom-Right Alignment (Anchored cleanly below tree canopy, moved more to the right) */
     #section-9 {
       justify-content: flex-end !important;
       align-items: flex-end !important;
       padding-bottom: 80px;
       padding-right: 5%;
     }
-
-    /* Scene 12: Top-Right Alignment (Shifted clear of the island and bridge) */
     #section-11 {
       justify-content: flex-end !important;
       align-items: flex-start !important;
@@ -137,7 +363,7 @@
       padding-right: 12%;
     }
 
-    /* Dynamic Glassmorphism cards with Cherry Blossom styles */
+    /* Glassmorphism Cards */
     .skill-card {
       pointer-events: auto;
       background: rgba(18, 12, 28, 0.45);
@@ -153,7 +379,7 @@
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 
                   inset 0 1px 1px rgba(255, 255, 255, 0.1);
       position: relative;
-      overflow: visible !important; /* Allow petals to drift outside card boundaries */
+      overflow: visible !important;
       transform-style: preserve-3d;
       will-change: transform;
       transition: border-color 0.4s ease, box-shadow 0.4s ease;
@@ -165,7 +391,6 @@
                   inset 0 1px 2px rgba(255, 255, 255, 0.15);
     }
 
-    /* Cherry Blossom Branch Background Pattern */
     .skill-card::after {
       content: '';
       position: absolute;
@@ -181,6 +406,7 @@
     .scroll-section.active .skill-card {
       opacity: 1;
       transform: translateY(0);
+      transition: opacity 0.8s ease, transform 0.8s ease;
     }
     .skill-card h3 {
       font-size: 11px;
@@ -201,7 +427,7 @@
       line-height: 1.6;
     }
 
-    /* Rating Rows Design with Vector Logo integrations */
+    /* Rating Design Elements */
     .skill-list {
       margin-bottom: 16px;
       display: flex;
@@ -239,7 +465,7 @@
       position: relative;
       display: inline-block;
       font-size: 14px;
-      color: rgba(244, 63, 94, 0.15); /* Empty backstars */
+      color: rgba(244, 63, 94, 0.15);
       letter-spacing: 2px;
       user-select: none;
     }
@@ -249,13 +475,13 @@
       left: 0;
       white-space: nowrap;
       overflow: hidden;
-      color: #fda4af; /* Filled stars */
+      color: #fda4af;
       text-shadow: 0 0 6px rgba(244, 63, 94, 0.8), 0 0 12px rgba(244, 63, 94, 0.4);
-      width: 0%; /* Initially zero for GSAP */
+      width: 0%; /* Dynamic GSAP targets */
       pointer-events: none;
     }
 
-    /* Falling Petals Element Container */
+    /* Petal Containers */
     .petal-container {
       position: absolute;
       inset: 0;
@@ -264,7 +490,6 @@
       z-index: 10;
     }
 
-    /* Cherry Petal Styling */
     .cherry-petal {
       position: absolute;
       background: linear-gradient(135deg, #fda4af 0%, #f43f5e 100%);
@@ -276,13 +501,11 @@
       transform-origin: center;
     }
 
-    /* Resting Petal State */
     .cherry-petal.resting-petal {
       transform: rotate(var(--rest-rot, 0deg)) scale(var(--rest-scale, 1));
       opacity: 0.9;
     }
 
-    /* Gentle Spring-like bud growth keyframe */
     @keyframes fade-in-petal {
       0% {
         opacity: 0;
@@ -298,7 +521,6 @@
       animation: fade-in-petal 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
 
-    /* 3D Tumble and Shedding Keyframe */
     @keyframes fall-and-tumble {
       0% {
         transform: translateY(0) rotate(var(--rest-rot, 0deg)) scale(var(--rest-scale, 1));
@@ -310,7 +532,7 @@
       }
     }
 
-    /* Vertical Navigation Dots stream */
+    /* Navigation Dot Stream */
     #scroll-dots {
       position: fixed;
       right: 30px;
@@ -340,7 +562,7 @@
       box-shadow: 0 0 10px rgba(225, 29, 72, 0.6);
     }
 
-    /* Scroll Down visual indicator */
+    /* Scroll Down Guide */
     #scroll-indicator {
       position: fixed;
       bottom: 30px;
@@ -383,34 +605,6 @@
       100% { opacity: 0; transform: translate(-50%, 10px); }
     }
 
-    /* Interface overlays */
-    #loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #06060c;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      transition: opacity 0.5s ease;
-    }
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid rgba(244, 63, 94, 0.1);
-      border-top-color: #f43f5e;
-      border-radius: 50%;
-      animation: spin 1s infinite linear;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
     #notification-toast {
       position: fixed;
       bottom: 20px;
@@ -426,7 +620,6 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
-    /* Responsive media rules */
     @media (max-width: 768px) {
       .scroll-section {
         justify-content: center !important;
@@ -449,8 +642,9 @@
     }
   </style>
 
-  <!-- Load GSAP -->
+  <!-- Load GSAP Core -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  
   <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
   <script type="importmap">
     {
@@ -463,33 +657,74 @@
 </head>
 <body>
 
-  <!-- Loading State Panel -->
-  <div id="loading-overlay">
-    <div class="spinner"></div>
-    <span id="loading-text" style="font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; text-align: center; max-width: 80%; line-height: 1.6;">
-      Initializing Spatial Arena...<br>
-      <span style="font-size: 9px; color: #f43f5e; opacity: 0.85; margin-top: 8px; display: block; letter-spacing: 1px;">For the best experience, please view in Fullscreen mode.</span>
-    </span>
+  <!-- ==========================================
+       1. ARCADE LOADER INTERFACE
+       ========================================== -->
+  <div class="scanlines" id="arcade-scanlines"></div>
+
+  <!-- HUD -->
+  <div id="hud" style="display: none;">
+    <div class="hud-panel" id="score-box">SCORE: 000000</div>
+    <div class="hud-panel" id="loading-box">SYSTEM LOADING: 0%</div>
+    <div class="hud-panel" id="speed-box">0 MPH</div>
   </div>
 
-  <!-- Main Viewport Canvas -->
-  <div id="canvas-container"></div>
+  <!-- Proceed Notification Banner -->
+  <div id="proceed-banner">
+    <p class="banner-title">MAIN GRID DEPLOYED & ONLINE</p>
+    <button id="proceed-btn">ENTER SYSTEM</button>
+  </div>
 
-  <!-- Fullscreen Toggle Button -->
-  <button id="fullscreen-btn">View Fullscreen</button>
+  <!-- Mobile Touch Controls -->
+  <div id="mobile-controls">
+    <div id="btn-left" class="touch-btn">&lt;</div>
+    <div id="btn-right" class="touch-btn">&gt;</div>
+  </div>
 
-  <!-- Global Vertical Progress Dots -->
-  <div id="scroll-dots"></div>
+  <!-- Start Overlay -->
+  <div id="start-screen" class="loader-overlay">
+    <h1 class="arcade-title">NEON HORIZON</h1>
+    <h2 class="arcade-subtitle">INTERACTIVE LOADING SECTOR</h2>
+    <button id="start-btn" class="arcade-btn">PLAY WHILE LOADING</button>
+    <div id="controls-hint">
+      STEER: A/D OR LEFT/RIGHT ARROWS<br><br>
+      CHIPS ARE DOWNLOADING IN THE BACKGROUND
+    </div>
+  </div>
+
+  <!-- Game Over Overlay -->
+  <div id="game-over-screen" class="loader-overlay">
+    <h1 style="color: #ff0000; text-shadow: 0 0 20px #ff0000; font-family: 'Orbitron', sans-serif;">SYSTEM CRASH</h1>
+    <div id="final-score">SCORE: 0</div>
+    <button id="restart-btn" class="arcade-btn">REBOOT GRID</button>
+  </div>
+
+  <!-- Arcade Canvas Wrapper -->
+  <div id="canvas-container-loader"></div>
+
+
+  <!-- ==========================================
+       2. CINEMATIC PORTFOLIO INTERFACE
+       ========================================== -->
+  <!-- Viewport Canvas -->
+  <div id="canvas-container-portfolio" style="opacity: 0; pointer-events: none; transition: opacity 1s ease;"></div>
+
+  <!-- Fullscreen Button -->
+  <button id="fullscreen-btn" style="opacity: 0; pointer-events: none; transition: opacity 0.5s ease;">View Fullscreen</button>
+
+  <!-- Progress Dots -->
+  <div id="scroll-dots" style="opacity: 0; pointer-events: none; transition: opacity 0.5s ease;"></div>
 
   <!-- Floating Scroll indicator -->
-  <div id="scroll-indicator">
+  <div id="scroll-indicator" style="opacity: 0; pointer-events: none; transition: opacity 0.5s ease;">
     <div class="mouse-wheel"></div>
     <span>Scroll to Explore</span>
   </div>
 
-  <!-- Immersive Cinematic Scrolling Sections -->
-  <div id="scroll-wrapper">
-    <!-- View 01 (Index 0) - Poetic Introduction -->
+  <!-- Scroll Sections -->
+  <div id="scroll-wrapper" style="opacity: 0; pointer-events: none; transition: opacity 1s ease;">
+    
+    <!-- View 01 - Prelude -->
     <div class="scroll-section" id="section-0">
       <div class="skill-card">
         <h3>Waypoint 01 — The Prelude</h3>
@@ -501,7 +736,7 @@
       </div>
     </div>
     
-    <!-- View 02 (Index 1) - Frontend Fundamentals -->
+    <!-- View 02 - Core Frontend -->
     <div class="scroll-section" id="section-1">
       <div class="skill-card">
         <h3>Waypoint 02 — Web Core</h3>
@@ -534,10 +769,10 @@
       </div>
     </div>
     
-    <!-- View 03 (Index 2) - Card Removed -->
+    <!-- View 03 - Blank -->
     <div class="scroll-section" id="section-2"></div>
     
-    <!-- View 04 (Index 3) - Frontend Development -->
+    <!-- View 04 - Client Logic -->
     <div class="scroll-section" id="section-3">
       <div class="skill-card">
         <h3>Waypoint 04 — Client Interaction</h3>
@@ -581,7 +816,7 @@
       </div>
     </div>
     
-    <!-- View 05 (Index 4) - 3D Designing -->
+    <!-- View 05 - 3D Designing -->
     <div class="scroll-section" id="section-4">
       <div class="skill-card">
         <h3>Waypoint 05 — Spatial Dimension</h3>
@@ -625,10 +860,10 @@
       </div>
     </div>
     
-    <!-- View 06 (Index 5) - Card Removed -->
+    <!-- View 06 - Blank -->
     <div class="scroll-section" id="section-5"></div>
     
-    <!-- View 07 (Index 6) - Programming -->
+    <!-- View 07 - Programming -->
     <div class="scroll-section" id="section-6">
       <div class="skill-card">
         <h3>Waypoint 07 — Logic & Systems</h3>
@@ -661,10 +896,10 @@
       </div>
     </div>
     
-    <!-- View 08 (Index 7) - Card Removed -->
+    <!-- View 08 - Blank -->
     <div class="scroll-section" id="section-7"></div>
     
-    <!-- View 09 (Index 8) - Graphics Designing -->
+    <!-- View 09 - Visual Arts -->
     <div class="scroll-section" id="section-8">
       <div class="skill-card">
         <h3>Waypoint 09 — Visual Assets</h3>
@@ -697,7 +932,7 @@
       </div>
     </div>
     
-    <!-- View 10 (Index 9) - Database Management -->
+    <!-- View 10 - Database Management -->
     <div class="scroll-section" id="section-9">
       <div class="skill-card">
         <h3>Waypoint 10 — Structured Storage</h3>
@@ -719,10 +954,10 @@
       </div>
     </div>
     
-    <!-- View 11 (Index 10) - Card Removed -->
+    <!-- View 11 - Blank -->
     <div class="scroll-section" id="section-10"></div>
     
-    <!-- View 12 (Index 11) - Poetic Conclusion -->
+    <!-- View 12 - Conclusion -->
     <div class="scroll-section" id="section-11">
       <div class="skill-card">
         <h3>Waypoint 12 — The Horizon</h3>
@@ -741,16 +976,41 @@
     import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'; 
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    // Core variables
-    let scene, camera, renderer, clock;
-    let ambientLight, directionalLight;
-    let workspaceModelsGroup;
+    // --- Arcade State Globals ---
+    let loaderScene, loaderCamera, loaderRenderer, loaderClock;
+    let isGameStarted = false;
+    let isGameOver = false;
+    let score = 0;
+    let baseSpeed = 0.6; 
+    let currentSpeed = 0;
+    let targetX = 0; 
+    const roadLimit = 3.6;
 
-    // Dynamic Orbit Controls tracker
+    let actualProgressTarget = 0;
+    let displayedProgress = 0;
+    let portfolioLoaded = false;
+
+    const keys = { Left: false, Right: false };
+    const obstacles = [];
+    const sceneryItems = [];
+    const dashedLines = [];
+    const particles = [];
+
+    let playerGroup, road, gridHelper;
+    let loaderAmbientLight, loaderPinkLight, loaderCyanLight;
+
+    // --- Portfolio State Globals ---
+    let portfolioScene, portfolioCamera, portfolioRenderer, portfolioClock;
+    let portfolioAmbientLight, portfolioDirectionalLight;
+    let workspaceModelsGroup;
     let controls = null;
     let currentLookAt = new THREE.Vector3();
+    let freeOrbitActive = false;
+    let scrollProgress = 0;
+    let targetScrollProgress = 0;
+    const lerpFactor = 0.05;
+    let currentWaypointIndex = 0;
 
-    // Camera waypoint values from skills.json
     const WAYPOINTS = [
       {
         "pos": [0.7443983932041797, 1.399862446093395, -1.0177532383406969],
@@ -802,105 +1062,614 @@
       }
     ];
 
-    // Scroll interpolation engines
-    let scrollProgress = 0;
-    let targetScrollProgress = 0;
-    const lerpFactor = 0.05; // Smoothing intensity
-    let currentWaypointIndex = 0;
-    
-    // Core state switches
-    let freeOrbitActive = false;
+    // --- Elements ---
+    const startScreen = document.getElementById('start-screen');
+    const gameOverScreen = document.getElementById('game-over-screen');
+    const startBtn = document.getElementById('start-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const hud = document.getElementById('hud');
+    const scoreBox = document.getElementById('score-box');
+    const speedBox = document.getElementById('speed-box');
+    const loadingBox = document.getElementById('loading-box');
+    const proceedBanner = document.getElementById('proceed-banner');
+    const proceedBtn = document.getElementById('proceed-btn');
+    const mobileControls = document.getElementById('mobile-controls');
 
-    init();
-    animate();
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+      mobileControls.style.display = 'flex';
+    }
 
-    function init() {
-      clock = new THREE.Clock();
+    // --- Unified Bootstrapper ---
+    initArcadeLoader();
+    initPortfolio();
+    animateArcadeLoop();
+    animatePortfolioLoop();
 
-      // Core Scene Container
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x06060c);
-      scene.fog = new THREE.FogExp2(0x06060c, 0.035);
+    // =========================================================================
+    // SECTION A: INTERACTIVE ROAD RUNNER LOADER GAME
+    // =========================================================================
 
-      // Camera initialization using the first waypoint
-      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    function initArcadeLoader() {
+      const container = document.getElementById('canvas-container-loader');
+
+      loaderScene = new THREE.Scene();
+      loaderScene.background = new THREE.Color(0x0a0519);
+      loaderScene.fog = new THREE.FogExp2(0x0a0519, 0.015);
+
+      loaderCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      loaderCamera.position.set(0, 12, 18);
+      loaderCamera.lookAt(0, 1, 0);
+
+      loaderRenderer = new THREE.WebGLRenderer({ antialias: true });
+      loaderRenderer.setSize(window.innerWidth, window.innerHeight);
+      loaderRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      loaderRenderer.shadowMap.enabled = true;
+      container.appendChild(loaderRenderer.domElement);
+
+      loaderClock = new THREE.Clock();
+
+      createLoaderEnvironment();
+      createPlayerCar();
+      createObstacles();
+      createParticles();
+      setupLoaderLights();
+
+      window.addEventListener('resize', onWindowResize);
+      setupInputListeners();
+    }
+
+    function createLoaderEnvironment() {
+      const sunTex = createSunTexture();
+      const sunGeo = new THREE.PlaneGeometry(35, 35);
+      const sunMat = new THREE.MeshBasicMaterial({ map: sunTex, transparent: true });
+      const sun = new THREE.Mesh(sunGeo, sunMat);
+      sun.position.set(0, 8, -130);
+      loaderScene.add(sun);
+
+      gridHelper = new THREE.GridHelper(300, 60, 0xff00aa, 0x440044);
+      gridHelper.position.set(0, -0.05, -100);
+      loaderScene.add(gridHelper);
+
+      const roadGeo = new THREE.PlaneGeometry(9, 400);
+      const roadMat = new THREE.MeshBasicMaterial({ color: 0x050515 });
+      road = new THREE.Mesh(roadGeo, roadMat);
+      road.rotation.x = -Math.PI / 2;
+      road.position.set(0, -0.01, -150);
+      loaderScene.add(road);
+
+      const borderGeo = new THREE.BoxGeometry(0.12, 0.15, 400);
+      const borderMatL = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+      const borderMatR = new THREE.MeshBasicMaterial({ color: 0xff0055 });
+
+      const leftBorder = new THREE.Mesh(borderGeo, borderMatL);
+      leftBorder.position.set(-4.5, 0.05, -150);
+      loaderScene.add(leftBorder);
+
+      const rightBorder = new THREE.Mesh(borderGeo, borderMatR);
+      rightBorder.position.set(4.5, 0.05, -150);
+      loaderScene.add(rightBorder);
+
+      for (let i = 0; i < 20; i++) {
+        const dashGeo = new THREE.BoxGeometry(0.08, 0.01, 3);
+        const dashMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+        const dash = new THREE.Mesh(dashGeo, dashMat);
+        dash.position.set(0, 0.01, -i * 15);
+        loaderScene.add(dash);
+        dashedLines.push(dash);
+      }
+
+      const pyramidGeo = new THREE.ConeGeometry(2, 6, 4);
+      const pyramidMat = new THREE.MeshBasicMaterial({ color: 0xff00aa, wireframe: true });
+
+      for (let i = 0; i < 15; i++) {
+        const side = Math.random() > 0.5 ? 1 : -1;
+        const pyr = new THREE.Mesh(pyramidGeo, pyramidMat);
+        pyr.position.set(side * (7 + Math.random() * 12), 3, -i * 20 - Math.random() * 10);
+        loaderScene.add(pyr);
+        sceneryItems.push({ mesh: pyr, side: side });
+      }
+    }
+
+    function createSunTexture() {
+      const size = 512;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      const grad = ctx.createLinearGradient(0, 0, 0, size);
+      grad.addColorStop(0, '#ff00aa');
+      grad.addColorStop(0.5, '#ff5500');
+      grad.addColorStop(1, '#ffcc00');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#0a0519'; 
+      for (let i = size / 2; i < size; i += 22) {
+        const thickness = (i - size / 2) * 0.45;
+        ctx.fillRect(0, i, size, thickness);
+      }
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    function createPlayerCar() {
+      playerGroup = new THREE.Group();
+
+      const bodyGeo = new THREE.BoxGeometry(1.3, 0.35, 2.3);
+      const bodyMat = new THREE.MeshStandardMaterial({ 
+        color: 0xff0055, 
+        roughness: 0.1, 
+        metalness: 0.8,
+        emissive: 0x440011 
+      });
+      const body = new THREE.Mesh(bodyGeo, bodyMat);
+      body.position.y = 0.25;
+      playerGroup.add(body);
+
+      const cabGeo = new THREE.BoxGeometry(0.9, 0.3, 1.1);
+      const cabMat = new THREE.MeshStandardMaterial({ 
+        color: 0x00ffff, 
+        roughness: 0.05, 
+        metalness: 0.9 
+      });
+      const cabin = new THREE.Mesh(cabGeo, cabMat);
+      cabin.position.set(0, 0.55, -0.1);
+      playerGroup.add(cabin);
+
+      const wheelGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.3, 12);
+      const wheelMat = new THREE.MeshBasicMaterial({ color: 0x111115 });
+      const wheelOffsets = [
+        [-0.68, 0.2, 0.7],  
+        [0.68, 0.2, 0.7],   
+        [-0.68, 0.2, -0.7], 
+        [0.68, 0.2, -0.7]   
+      ];
+
+      playerGroup.wheels = [];
+      wheelOffsets.forEach(pos => {
+        const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+        wheel.rotation.z = Math.PI / 2;
+        wheel.position.set(pos[0], pos[1], pos[2]);
+        playerGroup.add(wheel);
+        playerGroup.wheels.push(wheel);
+      });
+
+      const lightGeo = new THREE.BoxGeometry(0.25, 0.08, 0.05);
+      const lightMat = new THREE.MeshBasicMaterial({ color: 0xff0033 });
+      const leftLight = new THREE.Mesh(lightGeo, lightMat);
+      leftLight.position.set(-0.4, 0.3, 1.15);
+      const rightLight = leftLight.clone();
+      rightLight.position.x = 0.4;
+      playerGroup.add(leftLight);
+      playerGroup.add(rightLight);
+
+      const glowGeo = new THREE.PlaneGeometry(1.3, 2.3);
+      const glowMat = new THREE.MeshBasicMaterial({ 
+        color: 0x00ffff, 
+        transparent: true, 
+        opacity: 0.75, 
+        side: THREE.DoubleSide 
+      });
+      const glow = new THREE.Mesh(glowGeo, glowMat);
+      glow.rotation.x = Math.PI / 2;
+      glow.position.y = 0.02;
+      playerGroup.add(glow);
+
+      playerGroup.position.set(0, 0, 0);
+      loaderScene.add(playerGroup);
+    }
+
+    function createObstacles() {
+      const colors = [0x00ffff, 0xffff00, 0x00ff66, 0xffaa00];
+      const numObstacles = 4;
+
+      for (let i = 0; i < numObstacles; i++) {
+        const obsGroup = new THREE.Group();
+
+        const bodyGeo = new THREE.BoxGeometry(1.3, 0.4, 2.0);
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        const bodyMat = new THREE.MeshStandardMaterial({ 
+          color: randomColor, 
+          roughness: 0.2,
+          metalness: 0.5 
+        });
+        const body = new THREE.Mesh(bodyGeo, bodyMat);
+        body.position.y = 0.25;
+        obsGroup.add(body);
+
+        const cabGeo = new THREE.BoxGeometry(1.0, 0.3, 0.9);
+        const cabMat = new THREE.MeshBasicMaterial({ color: 0x111122, wireframe: true });
+        const cabin = new THREE.Mesh(cabGeo, cabMat);
+        cabin.position.set(0, 0.55, 0);
+        obsGroup.add(cabin);
+
+        const tailLightGeo = new THREE.BoxGeometry(0.2, 0.05, 0.05);
+        const tailLightMat = new THREE.MeshBasicMaterial({ color: 0xff3300 });
+        const leftTail = new THREE.Mesh(tailLightGeo, tailLightMat);
+        leftTail.position.set(-0.4, 0.25, 1);
+        const rightTail = leftTail.clone();
+        rightTail.position.x = 0.4;
+        obsGroup.add(leftTail);
+        obsGroup.add(rightTail);
+
+        obsGroup.position.set(
+          (Math.random() - 0.5) * roadLimit * 2,
+          0,
+          -60 - (i * 45)
+        );
+
+        loaderScene.add(obsGroup);
+        obstacles.push(obsGroup);
+      }
+    }
+
+    function createParticles() {
+      const particleGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
+      const particleMat = new THREE.MeshBasicMaterial({ 
+        color: 0x00ffff, 
+        transparent: true, 
+        opacity: 0.8 
+      });
+
+      for (let i = 0; i < 30; i++) {
+        const pMesh = new THREE.Mesh(particleGeo, particleMat.clone());
+        pMesh.position.set(0, -5, 0); 
+        loaderScene.add(pMesh);
+
+        particles.push({
+          mesh: pMesh,
+          active: false,
+          life: 0,
+          maxLife: 25,
+          vx: 0,
+          vy: 0,
+          vz: 0
+        });
+      }
+    }
+
+    function triggerExhaustParticle(x, y, z) {
+      const p = particles.find(item => !item.active);
+      if (p) {
+        p.active = true;
+        p.mesh.position.set(x + (Math.random() - 0.5) * 0.4, y, z);
+        p.mesh.scale.set(1, 1, 1);
+        p.mesh.material.opacity = 0.85;
+        p.life = p.maxLife;
+        p.vx = (Math.random() - 0.5) * 0.04;
+        p.vy = Math.random() * 0.02 + 0.01;
+        p.vz = currentSpeed * 0.6 + Math.random() * 0.06; 
+      }
+    }
+
+    function setupLoaderLights() {
+      loaderAmbientLight = new THREE.AmbientLight(0xffffff, 0.45);
+      loaderScene.add(loaderAmbientLight);
+
+      loaderPinkLight = new THREE.DirectionalLight(0xff00aa, 1.4);
+      loaderPinkLight.position.set(8, 12, 5);
+      loaderScene.add(loaderPinkLight);
+
+      loaderCyanLight = new THREE.DirectionalLight(0x00ffff, 1.0);
+      loaderCyanLight.position.set(-8, 8, -5);
+      loaderScene.add(loaderCyanLight);
+    }
+
+    function setupInputListeners() {
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') keys.Left = true;
+        if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') keys.Right = true;
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') keys.Left = false;
+        if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') keys.Right = false;
+      });
+
+      const btnLeft = document.getElementById('btn-left');
+      const btnRight = document.getElementById('btn-right');
+
+      btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); keys.Left = true; });
+      btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); keys.Left = false; });
+      btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); keys.Right = true; });
+      btnRight.addEventListener('touchend', (e) => { e.preventDefault(); keys.Right = false; });
+    }
+
+    // --- Progressive UI Loader Bridge ---
+    function startProgressTracking() {
+      const progressTimer = setInterval(() => {
+        if (isGameOver) return; 
+
+        // Safely buffer instantaneous caching to preserve the cinematic transition feel
+        if (actualProgressTarget > displayedProgress) {
+          displayedProgress += Math.min(4, actualProgressTarget - displayedProgress);
+        } else if (!portfolioLoaded && displayedProgress < 95) {
+          displayedProgress += Math.random() > 0.5 ? 0.5 : 0;
+        }
+
+        loadingBox.innerText = `SYSTEM LOADING: ${Math.floor(displayedProgress)}%`;
+
+        if (portfolioLoaded && displayedProgress >= 100) {
+          clearInterval(progressTimer);
+          triggerAssetsComplete();
+        }
+      }, 50);
+    }
+
+    function triggerAssetsComplete() {
+      loadingBox.style.borderColor = "#00ffff";
+      loadingBox.style.color = "#00ffff";
+      loadingBox.style.boxShadow = "0 0 20px rgba(0, 255, 255, 0.4)";
+      loadingBox.innerText = "SYSTEM ACTIVE";
+
+      gsap.to(proceedBanner, {
+        top: "85px",
+        duration: 0.8,
+        ease: "back.out(1.2)"
+      });
+    }
+
+    function startGame() {
+      gsap.to(startScreen, {
+        duration: 0.5,
+        opacity: 0,
+        pointerEvents: 'none',
+        onComplete: () => {
+          startScreen.style.display = 'none';
+          hud.style.display = 'flex';
+          isGameStarted = true;
+          startProgressTracking();
+        }
+      });
+
+      gsap.fromTo(loaderCamera.position, 
+        { x: 0, y: 15, z: 20 },
+        { x: 0, y: 2.1, z: 5.2, duration: 2.2, ease: "power2.out" }
+      );
+    }
+
+    function restartGame() {
+      gsap.to(gameOverScreen, {
+        duration: 0.4,
+        opacity: 0,
+        pointerEvents: 'none',
+        onComplete: () => {
+          score = 0;
+          baseSpeed = 0.6;
+          currentSpeed = 0;
+          targetX = 0;
+          isGameOver = false;
+
+          playerGroup.position.set(0, 0, 0);
+          playerGroup.rotation.set(0, 0, 0);
+
+          obstacles.forEach((obs, idx) => {
+            obs.position.set(
+              (Math.random() - 0.5) * roadLimit * 2,
+              0,
+              -60 - (idx * 45)
+            );
+          });
+
+          loaderCamera.position.set(0, 10, 15);
+          gsap.to(loaderCamera.position, { x: 0, y: 2.1, z: 5.2, duration: 1.5, ease: "power2.out" });
+        }
+      });
+    }
+
+    // --- Transition out of Arcade into Cinematic Showcase ---
+    function proceedToApplication() {
+      keys.Left = false;
+      keys.Right = false;
+      isGameStarted = false;
+
+      gsap.to(proceedBanner, {
+        top: "-160px",
+        duration: 0.4,
+        ease: "power2.in"
+      });
+
+      gsap.to(loaderCamera, {
+        fov: 30,
+        duration: 1.5,
+        ease: "power2.inOut",
+        onUpdate: () => loaderCamera.updateProjectionMatrix()
+      });
+
+      gsap.to(loaderCamera.position, {
+        x: 0,
+        y: 1.1,
+        z: 3.5,
+        duration: 1.5,
+        ease: "power3.in"
+      });
+
+      gsap.to(window, {
+        duration: 1.5,
+        onStart: () => {
+          gsap.to({ speed: currentSpeed }, {
+            speed: 4.5,
+            duration: 1.4,
+            ease: "power3.in",
+            onUpdate: function() {
+              currentSpeed = this.targets()[0].speed;
+            }
+          });
+        },
+        onComplete: () => {
+          const flash = document.createElement('div');
+          flash.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:#00ffff;z-index:1000;opacity:0;transition:opacity 0.6s ease;";
+          document.body.appendChild(flash);
+          
+          setTimeout(() => {
+            flash.style.opacity = "1";
+          }, 50);
+
+          setTimeout(() => {
+            // Teardown the Loader Scene
+            document.getElementById('canvas-container-loader').style.display = 'none';
+            document.getElementById('arcade-scanlines').style.display = 'none';
+            hud.style.display = 'none';
+            if (mobileControls) mobileControls.style.display = 'none';
+
+            // Reveal the Workspace Scene
+            const pCanvas = document.getElementById('canvas-container-portfolio');
+            pCanvas.style.opacity = '1';
+            pCanvas.style.pointerEvents = 'auto';
+
+            const scrollWrapper = document.getElementById('scroll-wrapper');
+            scrollWrapper.style.opacity = '1';
+            scrollWrapper.style.pointerEvents = 'auto';
+
+            document.getElementById('scroll-dots').style.opacity = '1';
+            document.getElementById('scroll-indicator').style.opacity = '1';
+            
+            const fsBtn = document.getElementById('fullscreen-btn');
+            fsBtn.style.opacity = '1';
+            fsBtn.style.pointerEvents = 'auto';
+
+            const firstSection = document.getElementById('section-0');
+            if (firstSection) {
+              firstSection.classList.add('active');
+            }
+
+            showToast("System Online — Waypoint 01");
+
+            gsap.to(flash, {
+              opacity: 0,
+              duration: 0.8,
+              onComplete: () => flash.remove()
+            });
+          }, 700);
+        }
+      });
+    }
+
+    const playerBox = new THREE.Box3();
+    const obstacleBox = new THREE.Box3();
+
+    function checkCollisions() {
+      playerBox.setFromObject(playerGroup);
+      playerBox.min.x += 0.15;
+      playerBox.max.x -= 0.15;
+      playerBox.min.z += 0.15;
+      playerBox.max.z -= 0.15;
+
+      for (let i = 0; i < obstacles.length; i++) {
+        obstacleBox.setFromObject(obstacles[i]);
+
+        if (playerBox.intersectsBox(obstacleBox)) {
+          triggerCrash();
+          break;
+        }
+      }
+    }
+
+    function triggerCrash() {
+      isGameOver = true;
+
+      const flash = document.createElement('div');
+      flash.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:#ffffff;z-index:999;pointer-events:none;opacity:0.95;";
+      document.body.appendChild(flash);
+      gsap.to(flash, { opacity: 0, duration: 0.4, onComplete: () => flash.remove() });
+
+      gsap.to(loaderCamera.position, {
+        x: "+=0.35",
+        yoyo: true,
+        repeat: 9,
+        duration: 0.04,
+        onComplete: () => loaderCamera.position.x = playerGroup.position.x
+      });
+
+      gsap.to(playerGroup.rotation, {
+        y: Math.PI * 3,
+        x: Math.PI * 0.15,
+        duration: 1.2,
+        ease: "power2.out"
+      });
+      gsap.to(playerGroup.position, {
+        y: 1.6,
+        yoyo: true,
+        repeat: 1,
+        duration: 0.5,
+        ease: "power1.out",
+        onComplete: () => playerGroup.position.y = 0
+      });
+
+      document.getElementById('final-score').innerText = `SCORE: ${score}`;
+      gsap.to(gameOverScreen, { duration: 0.8, opacity: 1, pointerEvents: 'auto', delay: 0.6 });
+    }
+
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', restartGame);
+    proceedBtn.addEventListener('click', proceedToApplication);
+
+    // =========================================================================
+    // SECTION B: CINEMATIC PORTFOLIO CAPABILITIES
+    // =========================================================================
+
+    function initPortfolio() {
+      portfolioClock = new THREE.Clock();
+
+      portfolioScene = new THREE.Scene();
+      portfolioScene.background = new THREE.Color(0x06060c);
+      portfolioScene.fog = new THREE.FogExp2(0x06060c, 0.035);
+
+      portfolioCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
       const startWp = WAYPOINTS[0];
-      camera.position.set(startWp.pos[0], startWp.pos[1], startWp.pos[2]);
+      portfolioCamera.position.set(startWp.pos[0], startWp.pos[1], startWp.pos[2]);
       currentLookAt.set(startWp.target[0], startWp.target[1], startWp.target[2]);
 
-      // WebGL Renderer configurations
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      document.getElementById('canvas-container').appendChild(renderer.domElement);
+      portfolioRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      portfolioRenderer.setSize(window.innerWidth, window.innerHeight);
+      portfolioRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      portfolioRenderer.shadowMap.enabled = true;
+      portfolioRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      document.getElementById('canvas-container-portfolio').appendChild(portfolioRenderer.domElement);
 
-      // Models Group configuration
       workspaceModelsGroup = new THREE.Group();
-      scene.add(workspaceModelsGroup);
+      portfolioScene.add(workspaceModelsGroup);
 
-      // Ambient Lighting Setup
-      ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-      scene.add(ambientLight);
+      portfolioAmbientLight = new THREE.AmbientLight(0xffffff, 1.5);
+      portfolioScene.add(portfolioAmbientLight);
 
-      // Directional Lighting Setup
-      directionalLight = new THREE.DirectionalLight(0xffffff, 0.1);
-      directionalLight.position.set(5, 10, 5);
-      directionalLight.castShadow = true;
-      directionalLight.shadow.mapSize.width = 1024;
-      directionalLight.shadow.mapSize.height = 1024;
-      directionalLight.shadow.bias = -0.001;
-      scene.add(directionalLight);
+      portfolioDirectionalLight = new THREE.DirectionalLight(0xffffff, 0.1);
+      portfolioDirectionalLight.position.set(5, 10, 5);
+      portfolioDirectionalLight.castShadow = true;
+      portfolioDirectionalLight.shadow.mapSize.width = 1024;
+      portfolioDirectionalLight.shadow.mapSize.height = 1024;
+      portfolioDirectionalLight.shadow.bias = -0.001;
+      portfolioScene.add(portfolioDirectionalLight);
 
-      // Ground plane setup for smooth shadow projection
       const floorGeo = new THREE.PlaneGeometry(100, 100);
       const floorMat = new THREE.ShadowMaterial({ opacity: 0.35 });
       const floorMesh = new THREE.Mesh(floorGeo, floorMat);
       floorMesh.rotation.x = -Math.PI / 2;
       floorMesh.position.y = -0.02;
       floorMesh.receiveShadow = true;
-      scene.add(floorMesh);
+      portfolioScene.add(floorMesh);
 
-      // Generate Navigation Dot Indicators
       buildDotNavigation();
-
-      // Load Assets Setup
       loadPortfolioAssets();
-
-      // Event Observers
-      window.addEventListener('resize', onWindowResize);
-      window.addEventListener('scroll', onPageScroll);
-
-      // Bind Mode Click Interfaces
       setupUserInteractionEvents();
-
-      // Setup dynamic shedding cards
       setupCherryCards();
-
-      // Setup card interactive 3D physics & elements timeline triggers
       setupGSAPInteractivity();
-
-      // Initialize default scroll mode states and active layout properties
-      setCinematicScrollMode(true);
     }
 
-    // Handles the core asset loading pipeline
     function loadPortfolioAssets() {
       const loader = new GLTFLoader();
 
-      // Initialize Draco Decoder
       const dracoLoader = new DRACOLoader();
-      dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.5/'); // Direct fallback to Google's CDN
+      dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.5/'); 
       loader.setDRACOLoader(dracoLoader);
 
-      const textOverlay = document.getElementById('loading-text');
-
-      // Loads skills.glb using its native coordinates
       loader.load(
         './skills.glb',
         (gltf) => {
-          hideLoadingPanel();
+          portfolioLoaded = true;
+          actualProgressTarget = 100;
           const loadedModel = gltf.scene;
           loadedModel.name = "Portfolio_Skills_Model";
 
@@ -915,28 +1684,26 @@
           });
 
           workspaceModelsGroup.add(loadedModel);
-          showToast("Loaded skills.glb successfully");
+          showToast("Core systems configured successfully.");
         },
         (xhr) => {
           if (xhr.total > 0) {
-            const percent = Math.round((xhr.loaded / xhr.total) * 100);
-            textOverlay.innerHTML = `Assembling model structures... ${percent}%<br><span style="font-size: 9px; color: #f43f5e; opacity: 0.85; margin-top: 8px; display: block; letter-spacing: 1px;">For the best experience, please view in Fullscreen mode.</span>`;
+            actualProgressTarget = Math.round((xhr.loaded / xhr.total) * 100);
           }
         },
         (error) => {
-          console.error("Critical GLTF Loading Error details:", error);
-          hideLoadingPanel();
+          console.error("Model download failure; initiating procedural layout:", error);
+          portfolioLoaded = true;
+          actualProgressTarget = 100;
           loadProceduralFallbackStructure();
         }
       );
     }
 
-    // Creates a geometric mechanical core when skills.glb is unavailable
     function loadProceduralFallbackStructure() {
       const group = new THREE.Group();
       group.name = "Procedural_Reactor";
 
-      // Pedestal core base
       const baseGeo = new THREE.CylinderGeometry(1.5, 1.7, 0.3, 32);
       const baseMat = new THREE.MeshStandardMaterial({
         color: 0x111827,
@@ -949,7 +1716,6 @@
       baseMesh.receiveShadow = true;
       group.add(baseMesh);
 
-      // Central dynamic core node
       const cylinderGeo = new THREE.CylinderGeometry(0.6, 0.6, 1.4, 16);
       const cylinderMat = new THREE.MeshStandardMaterial({
         color: 0x0f172a,
@@ -962,7 +1728,6 @@
       corePillar.receiveShadow = true;
       group.add(corePillar);
 
-      // Core power crystal
       const coreGeo = new THREE.OctahedronGeometry(0.4, 0);
       const coreMat = new THREE.MeshStandardMaterial({
         color: 0xf43f5e,
@@ -976,7 +1741,6 @@
       coreMesh.name = "GlowCoreCrystal";
       group.add(coreMesh);
 
-      // Outer mechanical orbital ring
       const ringGeo = new THREE.TorusGeometry(1.2, 0.06, 12, 48);
       const ringMat = new THREE.MeshStandardMaterial({
         color: 0xf43f5e,
@@ -990,18 +1754,20 @@
       group.add(dynamicRing);
 
       workspaceModelsGroup.add(group);
-      showToast("Using procedural fallback core");
+      showToast("Procedural baseline launched.");
     }
 
-    // Handles the calculation of scroll percentage
+    window.addEventListener('scroll', onPageScroll);
+
     function onPageScroll() {
+      if (isGameStarted || !portfolioLoaded) return;
+
       const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
       if (scrollHeight <= 0) return;
 
       const currentScroll = window.scrollY;
       targetScrollProgress = currentScroll / scrollHeight;
 
-      // Toggle display of the floating 'Scroll' guide card beyond initial step
       const indicator = document.getElementById('scroll-indicator');
       if (indicator) {
         if (currentScroll > 50) {
@@ -1012,7 +1778,6 @@
       }
     }
 
-    // Dynamic GSAP Animations for Interactive Star Rating Displays
     function animateStars(section) {
       const stars = section.querySelectorAll('.stars-inner');
       stars.forEach(star => {
@@ -1039,11 +1804,9 @@
       });
     }
 
-    // Coordinates the camera's spatial coordinates using progress interpolations
     function updateCameraSpatialInterpolation() {
       if (freeOrbitActive) return;
 
-      // Apply linear interpolation on progress rate to eliminate scrolling jitters
       scrollProgress += (targetScrollProgress - scrollProgress) * lerpFactor;
 
       const totalWaypoints = WAYPOINTS.length;
@@ -1063,12 +1826,10 @@
         const currentWp = WAYPOINTS[segmentIndex];
         const nextWp = WAYPOINTS[segmentIndex + 1];
 
-        // Linearly interpolate camera coordinates between the two nearest nodes
         const pStart = new THREE.Vector3(currentWp.pos[0], currentWp.pos[1], currentWp.pos[2]);
         const pEnd = new THREE.Vector3(nextWp.pos[0], nextWp.pos[1], nextWp.pos[2]);
         targetPos.lerpVectors(pStart, pEnd, localProgress);
 
-        // Linearly interpolate camera center focal points
         const fStart = new THREE.Vector3(currentWp.target[0], currentWp.target[1], currentWp.target[2]);
         const fEnd = new THREE.Vector3(nextWp.target[0], nextWp.target[1], nextWp.target[2]);
         targetFocus.lerpVectors(fStart, fEnd, localProgress);
@@ -1076,15 +1837,12 @@
         currentWaypointIndex = Math.round(scaledVal);
       }
 
-      // Smoothly update camera vectors
-      camera.position.copy(targetPos);
+      portfolioCamera.position.copy(targetPos);
       currentLookAt.copy(targetFocus);
 
-      // Trigger section transitions
       updateDOMElementsStates();
     }
 
-    // Handles element class toggles based on the current scroll step index
     function updateDOMElementsStates() {
       const sections = document.querySelectorAll('.scroll-section');
       const dots = document.querySelectorAll('.dot-node');
@@ -1112,7 +1870,6 @@
       });
     }
 
-    // Creates the lateral navigation dot node array
     function buildDotNavigation() {
       const container = document.getElementById('scroll-dots');
       container.innerHTML = '';
@@ -1123,7 +1880,6 @@
         if (idx === 0) dot.classList.add('active');
         dot.dataset.index = idx;
 
-        // Smooth scroll transition click triggers
         dot.addEventListener('click', () => {
           const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
           const targetY = (idx / (WAYPOINTS.length - 1)) * scrollHeight;
@@ -1142,29 +1898,14 @@
       });
     }
 
-    // Safe mode click listeners
     function setupUserInteractionEvents() {
-      const scrollModeBtn = document.getElementById('mode-scroll');
-      const freeModeBtn = document.getElementById('mode-free');
       const fsBtn = document.getElementById('fullscreen-btn');
-
-      if (scrollModeBtn) {
-        scrollModeBtn.addEventListener('click', () => {
-          setCinematicScrollMode(true);
-        });
-      }
-
-      if (freeModeBtn) {
-        freeModeBtn.addEventListener('click', () => {
-          setCinematicScrollMode(false);
-        });
-      }
 
       if (fsBtn) {
         fsBtn.addEventListener('click', () => {
           if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch((err) => {
-              console.error(`Error attempting to enable fullscreen: ${err.message}`);
+              console.error(`Unable to execute requestFullscreen: ${err.message}`);
             });
           } else {
             document.exitFullscreen();
@@ -1183,60 +1924,47 @@
       });
     }
 
-    // Toggles interface behaviors between story scroll and orbit controls
     function setCinematicScrollMode(active) {
-      const scrollModeBtn = document.getElementById('mode-scroll');
-      const freeModeBtn = document.getElementById('mode-free');
       const scrollWrapper = document.getElementById('scroll-wrapper');
 
       if (active) {
         freeOrbitActive = false;
 
-        // Cleanly dispose OrbitControls to release touch-action locks in standard browsers
         if (controls) {
           currentLookAt.copy(controls.target);
           controls.dispose();
           controls = null;
         }
 
-        // Ensure browser default touch-action is restored
-        renderer.domElement.style.touchAction = 'auto';
-        if (renderer.domElement.parentElement) {
-          renderer.domElement.parentElement.style.touchAction = 'auto';
+        portfolioRenderer.domElement.style.touchAction = 'auto';
+        if (portfolioRenderer.domElement.parentElement) {
+          portfolioRenderer.domElement.parentElement.style.touchAction = 'auto';
         }
 
-        if (scrollModeBtn) scrollModeBtn.classList.add('active');
-        if (freeModeBtn) freeModeBtn.classList.remove('active');
         if (scrollWrapper) {
           scrollWrapper.style.opacity = '1';
-          scrollWrapper.style.pointerEvents = 'auto'; // Allows container to receive gestures and scroll normal page height
+          scrollWrapper.style.pointerEvents = 'auto';
         }
 
-        // Re-align spatial coordinates with current scroll settings
         onPageScroll();
       } else {
         freeOrbitActive = true;
 
-        // Dynamically instantiate OrbitControls only when Free Orbit is selected
-        controls = new OrbitControls(camera, renderer.domElement);
+        controls = new OrbitControls(portfolioCamera, portfolioRenderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.target.copy(currentLookAt);
         controls.update();
 
-        if (scrollModeBtn) scrollModeBtn.classList.remove('active');
-        if (freeModeBtn) freeModeBtn.classList.add('active');
         if (scrollWrapper) {
           scrollWrapper.style.opacity = '0.15';
-          scrollWrapper.style.pointerEvents = 'none'; // Bypasses scrolling overlay so touch sweeps reach the canvas
+          scrollWrapper.style.pointerEvents = 'none';
         }
-        showToast("Free Orbit Activated: Drag to rotate");
+        showToast("Free Orbit Activated: Drag to rotate camera view");
       }
     }
 
-    // Setup micro-interactions for skill rows and 3D card tilt
     function setupGSAPInteractivity() {
-      // 1. Interactive 3D physical card tilt on mouse move
       document.querySelectorAll('.skill-card').forEach(card => {
         card.addEventListener('mousemove', (e) => {
           const rect = card.getBoundingClientRect();
@@ -1245,7 +1973,6 @@
           const xc = rect.width / 2;
           const yc = rect.height / 2;
           
-          // Subtle, professional level tilt ranges
           const angleX = (yc - y) / 12; 
           const angleY = (x - xc) / 12;
 
@@ -1270,7 +1997,6 @@
         });
       });
 
-      // 2. Row level active vector highlight timelines
       document.querySelectorAll('.skill-row').forEach(row => {
         const icon = row.querySelector('.tech-icon');
         const name = row.querySelector('.skill-name');
@@ -1332,10 +2058,8 @@
       });
     }
 
-    // Dynamic Cherry Blossom Petal Spawning & Realistic Living Tree Shake Mechanics
     function setupCherryCards() {
       document.querySelectorAll('.skill-card').forEach(card => {
-        // Create container for petals
         const container = document.createElement('div');
         container.className = 'petal-container';
         card.appendChild(container);
@@ -1346,46 +2070,39 @@
         let shakeIntensity = 0; 
         let time = 0;
         
-        // Mouse velocity tracking
         let lastX = 0;
         let lastY = 0;
         let lastTime = Date.now();
 
-        // Staggered shedding timeouts array
         let activeTimeouts = [];
         let hoverStartTime = 0;
 
-        // Populate initial resting petals sitting on top of branches before shake
         createRestingPetals(card, container);
 
         function createRestingPetals(targetCard, targetContainer) {
-          // Clear any current remnants
           targetContainer.querySelectorAll('.resting-petal').forEach(p => p.remove());
 
           const cardWidth = targetCard.offsetWidth || 380;
           const cardHeight = targetCard.offsetHeight || 200;
 
-          const count = Math.floor(Math.random() * 6) + 12; // 12 to 17 resting leaves
+          const count = Math.floor(Math.random() * 6) + 12; 
           for (let i = 0; i < count; i++) {
             const petal = document.createElement('div');
             petal.className = 'cherry-petal resting-petal fade-in';
 
-            const size = Math.random() * 8 + 7; // 7px to 15px leaf scale
+            const size = Math.random() * 8 + 7; 
 
-            // Cluster coordinates: some along top edge, some near the top-right SVG branch
             let startX, startY;
             if (Math.random() < 0.65) {
-              // Top-right branch cluster
               startX = cardWidth - (Math.random() * 110 + 10);
               startY = Math.random() * 45 - 10;
             } else {
-              // General spread along the top edge
               startX = Math.random() * (cardWidth - 40) + 20;
               startY = Math.random() * 15 - 10;
             }
 
-            const restRot = (Math.random() - 0.5) * 120; // default landing angle
-            const restScale = Math.random() * 0.3 + 0.8; // default landing scale
+            const restRot = (Math.random() - 0.5) * 120; 
+            const restScale = Math.random() * 0.3 + 0.8; 
 
             petal.style.width = `${size}px`;
             petal.style.height = `${size * 1.3}px`;
@@ -1398,21 +2115,16 @@
           }
         }
 
-        // Mouse displacement velocity calculation
         card.addEventListener('mousemove', (e) => {
           const now = Date.now();
           const dt = now - lastTime;
           if (dt > 0) {
             const dx = e.clientX - lastX;
             const dy = e.clientY - lastY;
-            const speed = Math.sqrt(dx * dx + dy * dy) / dt; // pixels per millisecond
+            const speed = Math.sqrt(dx * dx + dy * dy) / dt; 
 
-            // Cursor moves rapidly (shaking the tree branch)
             if (speed > 0.8) {
-              // Increase shake intensity proportionally
               shakeIntensity = Math.min(shakeIntensity + speed * 0.3, 1.2);
-              
-              // Spawn extra leaves immediately due to structural shake
               const extraSpawns = Math.floor(speed * 3);
               for (let i = 0; i < extraSpawns; i++) {
                 spawnPetal(true);
@@ -1430,7 +2142,6 @@
           const centerX = rect.width / 2;
           const centerY = rect.height / 2;
 
-          // Target 3D hover orientation tilt vectors
           targetTiltY = ((x - centerX) / centerX) * 10;
           targetTiltX = ((centerY - y) / centerY) * 10;
         });
@@ -1439,11 +2150,9 @@
           isHovered = false;
           shakeIntensity = 0;
           
-          // Clear active timeouts to avoid orphan petal falls
           activeTimeouts.forEach(clearTimeout);
           activeTimeouts = [];
 
-          // Return the WebGL scene scale to original values
           gsap.to(workspaceModelsGroup.scale, {
             x: 1.0,
             y: 1.0,
@@ -1451,19 +2160,17 @@
             duration: 0.8,
             ease: "elastic.out(1, 0.5)"
           });
-          gsap.to(directionalLight, {
+          gsap.to(portfolioDirectionalLight, {
             intensity: 0.1,
             duration: 0.5
           });
 
-          // Regenerate fresh resting petals on top of branches after a delay
           setTimeout(() => {
             if (!isHovered) {
               createRestingPetals(card, container);
             }
           }, 850);
 
-          // Clear transformations smoothly
           card.style.transform = '';
           tiltX = 0;
           tiltY = 0;
@@ -1477,18 +2184,15 @@
 
           const size = Math.random() * 8 + 6; 
           const startX = Math.random() * card.offsetWidth;
-          
           const startY = isInitialBurst ? (Math.random() * card.offsetHeight * 0.4) - 15 : Math.random() * 20 - 20;
+          const fallDist = Math.random() * 200 + 400; 
+          const swayDist = (Math.random() - 0.5) * 200; 
           
-          const fallDist = Math.random() * 200 + 400; // 400px to 600px fall depth
-          const swayDist = (Math.random() - 0.5) * 200; // Wind drag sway variance
-          
-          // Realistic 3D rotational values
           const rotX = (Math.random() - 0.5) * 1080; 
           const rotY = (Math.random() - 0.5) * 1080;
           const rotZ = (Math.random() - 0.5) * 360;
           
-          const duration = Math.random() * 2.5 + 2.0; // organic floating time duration
+          const duration = Math.random() * 2.5 + 2.0; 
 
           petal.style.width = `${size}px`;
           petal.style.height = `${size * 1.3}px`; 
@@ -1501,7 +2205,7 @@
           petal.style.setProperty('--rot-z', `${rotZ}deg`);
           petal.style.animationName = 'fall-and-tumble';
           petal.style.animationDuration = `${duration}s`;
-          petal.style.animationTimingFunction = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'; // Realistic ease-out drift
+          petal.style.animationTimingFunction = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)';
 
           container.appendChild(petal);
 
@@ -1510,7 +2214,6 @@
           }, duration * 1000);
         }
 
-        // Logic for decaying rate of continuous shedding
         function triggerSheddingFlow() {
           if (!isHovered) return;
 
@@ -1526,19 +2229,15 @@
           activeTimeouts.push(timeoutId);
         }
 
-        // Hover trigger logic
         card.addEventListener('mouseenter', (e) => {
           isHovered = true;
           hoverStartTime = Date.now();
-          
-          // Trigger impact physical shake intensity
           shakeIntensity = 1.0; 
           
           lastX = e.clientX;
           lastY = e.clientY;
           lastTime = Date.now();
 
-          // Detach and shed pre-existing resting petals
           container.querySelectorAll('.resting-petal').forEach((petal, index) => {
             petal.classList.remove('fade-in');
 
@@ -1555,25 +2254,19 @@
             petal.style.setProperty('--rot-y', `${rotY}deg`);
             petal.style.setProperty('--rot-z', `${rotZ}deg`);
 
-            // Begin tumble animations
             petal.style.animationName = 'fall-and-tumble';
             petal.style.animationDuration = `${duration}s`;
             petal.style.animationTimingFunction = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             petal.style.animationFillMode = 'forwards';
-            
-            // Stagger actual detaching delay
             petal.style.animationDelay = `${index * 15}ms`;
 
-            // Remove node after float falls away
             setTimeout(() => {
               petal.remove();
             }, (duration + (index * 0.015)) * 1000);
           });
 
-          // Begin the decaying continuous trickle loop
           triggerSheddingFlow();
 
-          // Scale the WebGL scene objects in response to mouse enter
           gsap.to(workspaceModelsGroup.scale, {
             x: 1.08,
             y: 1.08,
@@ -1581,7 +2274,7 @@
             duration: 0.5,
             ease: "power2.out"
           });
-          gsap.to(directionalLight, {
+          gsap.to(portfolioDirectionalLight, {
             intensity: 0.35,
             duration: 0.3
           });
@@ -1589,25 +2282,20 @@
           requestAnimationFrame(updateCardPhysics);
         });
 
-        // Spring physical animation system loop
         function updateCardPhysics() {
           if (!isHovered) return;
 
           time += 0.1;
 
-          // Dampen shake intensity exponentially
           shakeIntensity *= 0.94; 
           if (shakeIntensity < 0.01) {
-            shakeIntensity = 0.05; // Gentle baseline rustle from surrounding wind
+            shakeIntensity = 0.05; 
           }
 
-          // Dynamic structural recoil formula
-          const freq = 45; // High-frequency physical rustle speed
+          const freq = 45; 
           const shakeX = Math.sin(time * freq) * 7 * shakeIntensity;
           const shakeY = Math.cos(time * (freq * 0.8)) * 5 * shakeIntensity;
-          const shakeRotZ = Math.sin(time * (freq * 1.1)) * 3 * shakeIntensity;
 
-          // Merge physical shake mechanics with structural 3D tilt transformations
           gsap.set(card, {
             x: shakeX,
             y: shakeY,
@@ -1619,20 +2307,17 @@
       });
     }
 
-    // Handles the procedural micro-animations of scene objects
     function runObjectMicroAnimations(delta) {
       const model = workspaceModelsGroup.getObjectByName("Procedural_Reactor");
       if (model) {
-        const elapsed = clock.getElapsedTime();
+        const elapsed = portfolioClock.getElapsedTime();
         
-        // Ring orbital rotation
         const ring = model.getObjectByName("GlowCoreRing");
         if (ring) {
           ring.rotation.y += delta * 0.7;
           ring.rotation.x += delta * 0.3;
         }
 
-        // Crystal rotation & hovering offset
         const crystal = model.getObjectByName("GlowCoreCrystal");
         if (crystal) {
           crystal.rotation.y -= delta * 0.5;
@@ -1641,39 +2326,143 @@
       }
     }
 
-    // Core animation frame loops
-    function animate() {
-      requestAnimationFrame(animate);
 
-      const delta = clock.getDelta();
+    // =========================================================================
+    // SECTION C: COOPERATIVE RENDER TICK TIMERS
+    // =========================================================================
 
-      // Camera transitions
+    function animateArcadeLoop() {
+      requestAnimationFrame(animateArcadeLoop);
+
+      // Conserve CPU cycles if the loader scene is hidden
+      const container = document.getElementById('canvas-container-loader');
+      if (container.style.display === 'none') return;
+
+      const delta = loaderClock.getDelta();
+      const frameRatio = delta * 60; 
+
+      if (isGameStarted && !isGameOver) {
+        currentSpeed += (baseSpeed - currentSpeed) * 0.05 * frameRatio;
+        baseSpeed += 0.00015 * frameRatio;
+
+        score += Math.round(currentSpeed * 5);
+        scoreBox.innerText = `SCORE: ${score.toString().padStart(6, '0')}`;
+        speedBox.innerText = `${Math.floor(currentSpeed * 220)} MPH`;
+
+        if (keys.Left) targetX -= 0.15 * frameRatio;
+        if (keys.Right) targetX += 0.15 * frameRatio;
+        targetX = Math.max(-roadLimit, Math.min(roadLimit, targetX));
+
+        playerGroup.position.x += (targetX - playerGroup.position.x) * 0.2 * frameRatio;
+
+        const turnTiltY = (targetX - playerGroup.position.x) * 0.45;
+        const turnTiltZ = -(targetX - playerGroup.position.x) * 0.35;
+        playerGroup.rotation.y = turnTiltY;
+        playerGroup.rotation.z = turnTiltZ;
+
+        playerGroup.wheels.forEach(wheel => {
+          wheel.rotation.x -= currentSpeed * 0.45 * frameRatio;
+        });
+
+        loaderCamera.position.x += (playerGroup.position.x - loaderCamera.position.x) * 0.12 * frameRatio;
+        loaderCamera.lookAt(playerGroup.position.x * 0.6, playerGroup.position.y + 0.4, playerGroup.position.z - 2.5);
+
+        if (Math.random() < 0.5 * frameRatio) {
+          triggerExhaustParticle(playerGroup.position.x - 0.4, 0.1, playerGroup.position.z + 1.15);
+          triggerExhaustParticle(playerGroup.position.x + 0.4, 0.1, playerGroup.position.z + 1.15);
+        }
+
+        checkCollisions();
+
+      } else if (isGameOver) {
+        currentSpeed += (0 - currentSpeed) * 0.08 * frameRatio;
+      }
+
+      // Scroll Highway Components
+      const absoluteSpeed = currentSpeed * frameRatio;
+
+      dashedLines.forEach(dash => {
+        dash.position.z += absoluteSpeed;
+        if (dash.position.z > 15) {
+          dash.position.z = -185; 
+        }
+      });
+
+      sceneryItems.forEach(pyr => {
+        pyr.mesh.position.z += absoluteSpeed;
+        if (pyr.mesh.position.z > 15) {
+          pyr.mesh.position.z = -200 - Math.random() * 40;
+          pyr.mesh.position.x = pyr.side * (6 + Math.random() * 10);
+        }
+      });
+
+      obstacles.forEach((obs, index) => {
+        obs.position.z += absoluteSpeed * 0.55; 
+
+        if (obs.position.z > 15) {
+          obs.position.z = -150 - Math.random() * 80;
+          obs.position.x = (Math.random() - 0.5) * roadLimit * 2;
+        }
+      });
+
+      gridHelper.position.z += absoluteSpeed;
+      if (gridHelper.position.z > 5) {
+        gridHelper.position.z = 0; 
+      }
+
+      particles.forEach(p => {
+        if (p.active) {
+          p.mesh.position.x += p.vx * frameRatio;
+          p.mesh.position.y += p.vy * frameRatio;
+          p.mesh.position.z += p.vz * frameRatio;
+          p.life -= frameRatio;
+
+          const lifeRatio = Math.max(0, p.life / p.maxLife);
+          p.mesh.scale.set(lifeRatio, lifeRatio, lifeRatio);
+          p.mesh.material.opacity = lifeRatio * 0.75;
+
+          if (p.life <= 0) {
+            p.active = false;
+            p.mesh.position.set(0, -5, 0); 
+          }
+        }
+      });
+
+      loaderRenderer.render(loaderScene, loaderCamera);
+    }
+
+    function animatePortfolioLoop() {
+      requestAnimationFrame(animatePortfolioLoop);
+
+      // Do not run matrix computations if the user is playing the loader game
+      const container = document.getElementById('canvas-container-portfolio');
+      if (container.style.opacity === '0') return;
+
+      const delta = portfolioClock.getDelta();
+
       updateCameraSpatialInterpolation();
-
-      // Mesh animations
       runObjectMicroAnimations(delta);
 
       if (freeOrbitActive && controls) {
         controls.update();
       } else {
-        camera.lookAt(currentLookAt);
+        portfolioCamera.lookAt(currentLookAt);
       }
 
-      renderer.render(scene, camera);
+      portfolioRenderer.render(portfolioScene, portfolioCamera);
     }
 
     function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-
-    function hideLoadingPanel() {
-      const panel = document.getElementById('loading-overlay');
-      panel.style.opacity = '0';
-      setTimeout(() => {
-        panel.style.display = 'none';
-      }, 500);
+      if (loaderCamera && loaderRenderer) {
+        loaderCamera.aspect = window.innerWidth / window.innerHeight;
+        loaderCamera.updateProjectionMatrix();
+        loaderRenderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      if (portfolioCamera && portfolioRenderer) {
+        portfolioCamera.aspect = window.innerWidth / window.innerHeight;
+        portfolioCamera.updateProjectionMatrix();
+        portfolioRenderer.setSize(window.innerWidth, window.innerHeight);
+      }
     }
 
     function showToast(message) {
