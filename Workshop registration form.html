@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Workshop registration form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#eef2f6; --card:#ffffff; --ink:#1c2733; --muted:#5d6b7a;
+  --line:#c8d1db; --accent:#1f5fbf; --accent-ink:#ffffff; --ok:#1d7a4d; --err:#b3261e;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1620; --card:#18222e; --ink:#e8eef5; --muted:#9aa9b9;
+    --line:#33414f; --accent:#6aa3f5; --accent-ink:#0b1420; --ok:#5cc690; --err:#ff8a80;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --card:#18222e; --ink:#e8eef5; --muted:#9aa9b9;
+  --line:#33414f; --accent:#6aa3f5; --accent-ink:#0b1420; --ok:#5cc690; --err:#ff8a80;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);padding:32px 16px}
+form{max-width:640px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:32px}
+h1{font:600 2rem/1.15 var(--serif);margin:0 0 6px}
+.lead{color:var(--muted);margin:0 0 28px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0 0 24px;padding:18px 0 0}
+legend{font-weight:600;padding:0 10px 0 0}
+.field{margin-bottom:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:520px){.row{grid-template-columns:1fr}form{padding:22px}}
+label,.label{display:block;font-weight:500;margin-bottom:6px}
+.hint{color:var(--muted);font-size:.875rem;margin-top:4px}
+input[type=text],input[type=email],input[type=password],input[type=tel],input[type=date],input[type=number],select,textarea{
+  width:100%;font:inherit;color:var(--ink);background:var(--bg);
+  border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+textarea{min-height:110px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,
+.choice input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.choice{display:flex;align-items:center;gap:10px;font-weight:400;margin-bottom:8px;cursor:pointer}
+.choice input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.inline{display:flex;flex-wrap:wrap;gap:6px 24px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.pw{display:flex;gap:8px}
+.pw button{white-space:nowrap}
+.pw input{flex:1}
+button{font:inherit;font-weight:600;border-radius:8px;padding:10px 18px;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.error{color:var(--err);font-size:.875rem;min-height:1.2em;margin-top:4px}
+#result{margin-top:20px;border:1px solid var(--ok);border-radius:8px;padding:14px 16px}
+#result[hidden]{display:none}
+#result h2{margin:0 0 8px;font-size:1.05rem;color:var(--ok)}
+#result dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:4px 14px}
+#result dt{color:var(--muted)}
+#result dd{margin:0;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<form id="f" novalidate>
+  <h1>Workshop registration</h1>
+  <p class="lead">Tell us a bit about yourself to reserve a seat. Fields marked * are required.</p>
+
+  <fieldset>
+    <legend>About you</legend>
+    <div class="row">
+      <div class="field">
+        <label for="first">First name *</label>
+        <input type="text" id="first" name="first" autocomplete="given-name" required>
+        <div class="error" data-for="first"></div>
+      </div>
+      <div class="field">
+        <label for="last">Last name *</label>
+        <input type="text" id="last" name="last" autocomplete="family-name" required>
+        <div class="error" data-for="last"></div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="email">Email *</label>
+      <input type="email" id="email" name="email" autocomplete="email" required>
+      <div class="error" data-for="email"></div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="phone" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label for="dob">Date of birth</label>
+        <input type="date" id="dob" name="dob">
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Account</legend>
+    <div class="field">
+      <label for="pw">Password *</label>
+      <div class="pw">
+        <input type="password" id="pw" name="pw" autocomplete="new-password" minlength="8" required>
+        <button type="button" id="toggle" aria-pressed="false">Show</button>
+      </div>
+      <div class="hint">At least 8 characters.</div>
+      <div class="error" data-for="pw"></div>
+    </div>
+    <div class="field">
+      <label for="pw2">Confirm password *</label>
+      <input type="password" id="pw2" name="pw2" autocomplete="new-password" required>
+      <div class="error" data-for="pw2"></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Your session</legend>
+    <div class="field">
+      <label for="track">Track</label>
+      <select id="track" name="track">
+        <option value="">Choose a track</option>
+        <option>Web design</option>
+        <option>Data analysis</option>
+        <option>Photography</option>
+      </select>
+    </div>
+    <div class="field" role="radiogroup" aria-labelledby="attend-l">
+      <span class="label" id="attend-l">How will you attend? *</span>
+      <div class="inline">
+        <label class="choice"><input type="radio" name="attend" value="In person"> In person</label>
+        <label class="choice"><input type="radio" name="attend" value="Online"> Online</label>
+      </div>
+      <div class="error" data-for="attend"></div>
+    </div>
+    <div class="field">
+      <span class="label">Which days can you join?</span>
+      <div class="inline">
+        <label class="choice"><input type="checkbox" name="days" value="Saturday"> Saturday</label>
+        <label class="choice"><input type="checkbox" name="days" value="Sunday"> Sunday</label>
+      </div>
+    </div>
+    <div class="field">
+      <label for="exp">Experience level: <output id="expOut">3</output> of 5</label>
+      <input type="range" id="exp" name="exp" min="1" max="5" value="3">
+    </div>
+    <div class="field">
+      <label for="msg">Anything we should know?</label>
+      <textarea id="msg" name="msg" maxlength="300"></textarea>
+      <div class="hint"><span id="count">0</span>/300 characters</div>
+    </div>
+    <label class="choice"><input type="checkbox" id="terms" name="terms"> I agree to the event terms *</label>
+    <div class="error" data-for="terms"></div>
+  </fieldset>
+
+  <div class="actions">
+    <button type="submit" class="primary">Reserve my seat</button>
+    <button type="reset" id="reset">Clear form</button>
+  </div>
+
+  <div id="result" hidden aria-live="polite"></div>
+</form>
+
+<script>
+const f = document.getElementById('f');
+const result = document.getElementById('result');
+const pw = document.getElementById('pw');
+
+document.getElementById('toggle').addEventListener('click', e => {
+  const show = pw.type === 'password';
+  pw.type = show ? 'text' : 'password';
+  e.target.textContent = show ? 'Hide' : 'Show';
+  e.target.setAttribute('aria-pressed', show);
+});
+document.getElementById('exp').addEventListener('input', e => {
+  document.getElementById('expOut').textContent = e.target.value;
+});
+document.getElementById('msg').addEventListener('input', e => {
+  document.getElementById('count').textContent = e.target.value.length;
+});
+f.addEventListener('reset', () => {
+  result.hidden = true;
+  document.getElementById('count').textContent = '0';
+  document.getElementById('expOut').textContent = '3';
+  document.querySelectorAll('.error').forEach(el => el.textContent = '');
+});
+
+function setErr(name, text){
+  const el = document.querySelector('.error[data-for="' + name + '"]');
+  if (el) el.textContent = text;
+  return !text;
+}
+
+f.addEventListener('submit', e => {
+  e.preventDefault();
+  const d = new FormData(f);
+  let ok = true;
+  ok = setErr('first', d.get('first').trim() ? '' : 'Enter your first name.') && ok;
+  ok = setErr('last', d.get('last').trim() ? '' : 'Enter your last name.') && ok;
+  ok = setErr('email', /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.get('email')) ? '' : 'Enter a valid email, like name@example.com.') && ok;
+  ok = setErr('pw', d.get('pw').length >= 8 ? '' : 'Use at least 8 characters.') && ok;
+  ok = setErr('pw2', d.get('pw2') === d.get('pw') && d.get('pw2') ? '' : 'Passwords do not match.') && ok;
+  ok = setErr('attend', d.get('attend') ? '' : 'Choose how you will attend.') && ok;
+  ok = setErr('terms', d.get('terms') ? '' : 'Agree to the terms to continue.') && ok;
+  if (!ok){
+    const first = document.querySelector('.error:not(:empty)');
+    first.scrollIntoView({block:'center', behavior:'smooth'});
+    return;
+  }
+  const rows = [
+    ['Name', d.get('first') + ' ' + d.get('last')],
+    ['Email', d.get('email')],
+    ['Track', d.get('track') || 'Not chosen'],
+    ['Attending', d.get('attend')],
+    ['Days', d.getAll('days').join(', ') || 'None selected'],
+    ['Experience', d.get('exp') + ' of 5']
+  ];
+  result.replaceChildren();
+  const h = document.createElement('h2');
+  h.textContent = 'Seat reserved';
+  const dl = document.createElement('dl');
+  rows.forEach(([k, v]) => {
+    const dt = document.createElement('dt'); dt.textContent = k;
+    const dd = document.createElement('dd'); dd.textContent = v;
+    dl.append(dt, dd);
+  });
+  result.append(h, dl);
+  result.hidden = false;
+  result.scrollIntoView({block:'nearest', behavior:'smooth'});
+});
+</script>
+</body>
+</html>
